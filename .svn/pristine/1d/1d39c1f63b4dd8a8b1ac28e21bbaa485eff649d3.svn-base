@@ -1,0 +1,1954 @@
+<?php
+ob_start();
+?>
+<style>
+.organisation-select + .select2-container,
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--single {
+    height: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.select2-container--default:hover .select2-selection--single {
+    border-color: #94a3b8 !important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: #1e4d7b !important;
+    box-shadow: 0 0 0 3px rgba(30, 77, 123, 0.10) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    width: 100% !important;
+    color: #334155 !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 42px !important;
+    padding-left: 15px !important;
+    padding-right: 72px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    box-sizing: border-box !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    position: absolute !important;
+    top: 50% !important;
+    right: 42px !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #64748b !important;
+    font-size: 18px !important;
+    font-weight: 400 !important;
+    line-height: 18px !important;
+    z-index: 2 !important;
+    cursor: pointer !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear:hover {
+    color: #dc2626 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    position: absolute !important;
+    top: 0 !important;
+    right: 8px !important;
+    width: 28px !important;
+    height: 42px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    margin: -2px 0 0 -4px !important;
+    border-color: #64748b transparent transparent transparent !important;
+    border-width: 5px 4px 0 4px !important;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    margin-top: -3px !important;
+    border-color: transparent transparent #1e4d7b transparent !important;
+    border-width: 0 4px 5px 4px !important;
+}
+
+.select2-dropdown {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12) !important;
+    margin-top: 4px !important;
+}
+
+.select2-search--dropdown {
+    padding: 8px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.select2-search--dropdown .select2-search__field {
+    width: 100% !important;
+    height: 36px !important;
+    padding: 7px 10px !important;
+    color: #334155 !important;
+    font-size: 13px !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+}
+
+.select2-search--dropdown .select2-search__field:focus {
+    border-color: #1e4d7b !important;
+    box-shadow: 0 0 0 2px rgba(30, 77, 123, 0.08) !important;
+}
+
+.select2-results__option {
+    padding: 10px 14px !important;
+    color: #334155 !important;
+    font-size: 13px !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #1e4d7b !important;
+    color: #ffffff !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    background-color: #eff6ff !important;
+    color: #1e4d7b !important;
+    font-weight: 600 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #94a3b8 !important;
+}
+
+@media (max-width: 640px) {
+    .select2-container--default .select2-selection--single {
+        height: 42px !important;
+        min-height: 42px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 40px !important;
+        padding-left: 13px !important;
+        padding-right: 65px !important;
+        font-size: 13px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px !important;
+    }
+}
+
+
+
+</style>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+ <div id="toast-container"
+         style="
+            position:fixed;
+            top:20px;
+            right:20px;
+            z-index:99999;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            pointer-events:none;
+         ">
+    </div>
+    <div class="lg:col-span-2 space-y-6">   
+    <form id="permissionForm" action="/submit-request" method="POST" class="space-y-6" enctype="multipart/form-data">
+    <!-- CSRF Token -->
+    <?= csrf_field() ?>
+    <div class="gov-card p-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-file-signature text-[#e58500] text-2xl"></i>
+                <div>
+                    <h2 class="text-xl font-bold text-[#1e4d7b]">New Permission Application</h2>
+                    <p class="text-xs text-slate-500 font-medium">Form JPMS-1 · Application for deployment of signal jammers</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================
+         Organisation Details
+         ========================================================== -->
+        <div class="space-y-4">
+            <h3 class="text-base font-bold text-[#1e4d7b] flex items-center gap-2 border-b border-slate-100 pb-2">
+                <i class="fas fa-building"></i> Organisation Details
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- NAME OF ORGANISATION -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Name of organisation</label>
+                    <select name="organisation_name" id="organisation_name" class="organisation-select w-full" required>
+                        <option value=""></option>
+                        <?php if (!empty($organizations)): ?>
+                            <?php foreach ($organizations as $organisation): ?>
+                                <option value="<?= esc($organisation['org_name']) ?>"
+                                    data-organization-id="<?= esc($organisation['id']) ?>"
+                                    data-org-type="<?= esc($organisation['org_type']) ?>"
+                                    <?= ((int)$organisation['id'] === (int)$organization_id) ? 'selected' : '' ?>>
+                                    <?= esc($organisation['org_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <input type="hidden" name="organization_id" id="organization_id" value="<?= esc($organization_id ?? '') ?>">
+                    <p class="text-xs text-slate-500 mt-1">Select from the list or type your organisation name manually.</p>
+                </div>
+
+                <!-- TYPE OF ORGANISATION -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Type of organisation</label>
+                    <select name="organisation_type" id="organisation_type" class="organisation-select w-full" required>
+                        <option value=""></option>
+                        <?php if (!empty($organization_types)): ?>
+                            <?php foreach ($organization_types as $type): ?>
+                                <option value="<?= esc($type['name']) ?>"
+                                    data-type-id="<?= esc($type['id']) ?>"
+                                    data-ugc-required="<?= esc($type['is_ugc_id_required']) ?>"
+                                    <?= ((int)$type['id'] === (int)$org_type) ? 'selected' : '' ?>>
+                                    <?= esc($type['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <input type="hidden" name="org_type" id="org_type" value="<?= esc($org_type ?? '') ?>">
+                    <p class="text-xs text-slate-500 mt-1">Select from the list or type your organisation type manually.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+     EXAMINATION DETAILS
+     ========================================================== -->
+    <div class="gov-card p-6">
+        <div class="space-y-5">
+
+            <!-- Heading -->
+            <h3 class="text-base font-bold text-[#1e4d7b] flex items-center gap-2 border-b border-slate-100 pb-2">
+                <i class="fas fa-graduation-cap"></i>
+                Examination Details
+            </h3>
+
+            <!-- SINGLE / MULTIPLE -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">
+                    Whether request for deployment of jammers is for a single examination?
+                </label>
+                <div class="flex items-center gap-6">
+                    <label class="inline-flex items-center cursor-pointer text-sm font-medium text-slate-700">
+                        <input type="radio" name="single_exam" value="yes" checked class="w-4 h-4 text-[#1e4d7b] focus:ring-[#1e4d7b]">
+                        <span class="ml-2">Yes</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer text-sm font-medium text-slate-700">
+                        <input type="radio" name="single_exam" value="no" class="w-4 h-4 text-[#1e4d7b] focus:ring-[#1e4d7b]">
+                        <span class="ml-2">No</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- SINGLE EXAMINATION -->
+            <div id="single-exam-container">
+                <div class="centre-details grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Name of examination</label>
+                        <input type="text" name="single_exam_name" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm" placeholder="Enter examination name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Date of examination</label>
+                        <div class="relative">
+                            <input type="text" name="single_exam_date" id="singleExamDateText" placeholder="dd/mm/yyyy" maxlength="10" class="date-text w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm pr-10">
+                            <input type="date" id="singleExamDatePicker" class="date-picker absolute right-2 top-1/2 -translate-y-1/2 opacity-0 w-8 h-8 cursor-pointer z-10">
+                            <i class="fas fa-calendar-alt absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- SINGLE CENTRES -->
+                    <div class="mt-5">
+
+                    <!-- Header -->
+                    <div class="flex items-center justify-end mb-3">
+                        <button
+                            type="button"
+                            id="addSingleCentre"
+                            class="inline-flex items-center gap-1.5 px-3 py-2
+                                   bg-[#1e4d7b] hover:bg-[#163a5c]
+                                   text-white text-xs font-semibold
+                                   rounded-lg transition">
+                            <i class="fas fa-plus"></i>
+                            Add Centre
+                        </button>
+                    </div>
+
+                    <div id="single-centres-container">
+
+                        <div class="centre-item border border-slate-200 rounded-xl p-4 bg-slate-50">
+
+                            <!-- Checkbox -->
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+
+                                <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        name="single_centre_not_available[]"
+                                        class="centre-not-available w-4 h-4 text-[#1e4d7b]
+                                               rounded border-slate-300
+                                               focus:ring-[#1e4d7b]"
+                                    >
+
+                                    <span class="text-xs font-semibold text-slate-700">
+                                        Centre Information Not Available
+                                    </span>
+                                </label>
+
+                            </div>
+
+                            <!-- Centre Heading -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-semibold text-slate-700">
+                                    Centre of examination
+                                </label>
+                            </div>
+
+                            <!-- Centre Details -->
+                            <div class="centre-details grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                                <!-- Centre Name -->
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Centre Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="single_centre_name[]"
+                                        class="centre-name w-full px-3 py-2
+                                               border border-slate-300 rounded-lg
+                                               bg-white text-sm
+                                               focus:outline-none focus:ring-2
+                                               focus:ring-[#1e4d7b]"
+                                        placeholder="Enter centre name"
+                                    >
+                                </div>
+
+                                <!-- Coordinates -->
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Centre Coordinates
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="single_centre_coordinates[]"
+                                        class="centre-coordinates w-full px-3 py-2
+                                               border border-slate-300 rounded-lg
+                                               bg-white text-sm
+                                               focus:outline-none focus:ring-2
+                                               focus:ring-[#1e4d7b]"
+                                        placeholder="e.g. 28.6139, 77.2090"
+                                    >
+                                </div>
+
+                                <!-- State -->
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        State / UT
+                                    </label>
+
+                                    <select
+                                        name="single_centre_state[]"
+                                        class="single-centre-state w-full">
+                                        <option value="">Select State / UT</option>
+                                    </select>
+                                </div>
+
+                                <!-- District -->
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        City / District
+                                    </label>
+
+                                    <select
+                                        name="single_centre_district[]"
+                                        class="single-centre-district w-full"
+                                        disabled>
+                                        <option value="">Select District / City</option>
+                                    </select>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                        Centre Address
+                                    </label>
+
+                                    <textarea
+                                        name="single_centre_address[]"
+                                        rows="2"
+                                        class="centre-address w-full px-3 py-2
+                                               border border-slate-300 rounded-lg
+                                               bg-white text-sm
+                                               focus:outline-none focus:ring-2
+                                               focus:ring-[#1e4d7b]"
+                                        placeholder="Enter complete centre address..."></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- EXCEL UPLOAD -->
+                <div class="mt-5">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Upload Excel sheet of examinations / centres</label>
+                    <div class="flex items-center gap-2">
+                        <label class="flex-1 cursor-pointer flex items-center justify-center px-4 py-2.5 border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 rounded-lg transition text-slate-600 text-sm font-medium">
+                            <i class="fas fa-file-excel text-emerald-600 mr-2 text-base"></i>
+                            Choose Excel File
+                            <input type="file" name="single_exam_excel" accept=".xlsx,.xls,.csv" class="hidden excel-input">
+                        </label>
+                        <span class="excel-file-name text-xs text-slate-400">No file selected</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Supported formats: XLSX, XLS, CSV</p>
+                </div>
+            </div>
+
+            <!-- MULTIPLE EXAMINATIONS -->
+            <div id="multiple-exam-container" class="hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h4 class="text-sm font-bold text-[#1e4d7b]">Multiple Examination Details</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Add examination and centre details separately.</p>
+                    </div>
+                    <button type="button" id="addExam" class="inline-flex items-center gap-1.5 px-3 py-2 bg-[#1e4d7b] hover:bg-[#163a5c] text-white text-xs font-semibold rounded-lg transition">
+                        <i class="fas fa-plus"></i>Add Examination
+                    </button>
+                </div>
+                <div id="multiple-exams-list"></div>
+
+                <!-- Multiple Excel -->
+                <div class="mt-5">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Upload Excel sheet of examinations / centres</label>
+                    <div class="flex items-center gap-2">
+                        <label class="flex-1 cursor-pointer flex items-center justify-center px-4 py-2.5 border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 rounded-lg transition text-slate-600 text-sm font-medium">
+                            <i class="fas fa-file-excel text-emerald-600 mr-2 text-base"></i>
+                            Choose Excel File
+                            <input type="file" name="multiple_exam_excel" accept=".xlsx,.xls,.csv" class="hidden excel-input">
+                        </label>
+                        <span class="excel-file-name text-xs text-slate-400">No file selected</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Supported formats: XLSX, XLS, CSV</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========================================================
+        Vendor Details
+    ========================================================== -->
+    <div class="gov-card p-6">
+        <div class="space-y-4">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <h3 class="text-base font-bold text-[#1e4d7b] flex items-center gap-2">
+                    <i class="fas fa-microchip"></i>
+                    Vendor Details
+                </h3>
+                <button type="button"
+                        onclick="addVendor()"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-[#1e4d7b] hover:bg-[#163a5c] text-white text-sm font-semibold rounded-lg transition">
+                    <i class="fas fa-plus"></i>
+                    Add Vendor
+                </button>
+            </div>
+
+            <!-- Vendor Container -->
+            <div id="vendorContainer">
+
+                <!-- First Vendor -->
+                <div class="vendor-item border border-slate-200 rounded-xl p-4 mb-4 bg-slate-50">
+
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="font-semibold text-[#1e4d7b]">
+                            <i class="fas fa-building mr-1"></i>
+                            Vendor 1
+                        </h4>
+                        <button type="button"
+                                onclick="removeVendor(this)"
+                                class="hidden text-red-500 hover:text-red-700 text-sm font-semibold">
+                            <i class="fas fa-trash-alt mr-1"></i>
+                            Remove
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <!-- Vendor -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                                Name of vendor
+                            </label>
+                            <select name="vendor_id[]"
+                                    class="vendor-select w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm bg-white"
+                                    required>
+                                <option value="">Select vendor</option>
+                            </select>
+                        </div>
+
+                        <!-- Jammer Model (Single Select) -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                                Jammer model
+                            </label>
+                            <select name="jammer_model_ids[]"
+                                    class="model-select w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm bg-white">
+                                <option value="">Select jammer model</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Technical Specification -->
+                    <div class="mt-4">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                            Technical specifications of jammers
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <label class="flex-1 cursor-pointer flex items-center justify-center px-4 py-2 border border-dashed border-slate-300 bg-white hover:bg-slate-100 rounded-lg transition text-slate-600 text-sm font-medium">
+                                <i class="fas fa-file-pdf text-[#e58500] mr-2"></i>
+                                <span>Choose file</span>
+                                <input type="file"
+                                       name="technical_specifications[]"
+                                       accept=".pdf"
+                                       class="hidden"
+                                       onchange="showFileName(this)">
+                            </label>
+                            <span class="file-name text-xs text-slate-400">No file selected</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+        Contact Details
+    ========================================================== -->
+    <div class="gov-card p-6">
+        <div class="space-y-4">
+            <h3 class="text-base font-bold text-[#1e4d7b] flex items-center gap-2 border-b border-slate-100 pb-2">
+                <i class="fas fa-user-tie"></i> Contact Details
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Contact person</label>
+                    <input type="text" name="contact_person" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm" placeholder="Full name" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email</label>
+                    <input type="email" name="contact_email" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm" placeholder="email@example.com" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone</label>
+                <input type="tel" name="contact_phone" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm" placeholder="+91 XXXXX XXXXX" required>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+       Declarations
+     ========================================================== -->
+    <div class="gov-card p-6 space-y-6">
+        <div class="space-y-2">
+            <h3 class="text-base font-bold text-[#1e4d7b] mb-3 flex items-center gap-2 border-b border-slate-100 pb-2">
+                <i class="fas fa-file-contract"></i> Declarations
+            </h3>
+            <div class="space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <label class="flex items-start gap-2 cursor-pointer">
+                    <input type="checkbox"
+                           name="declarations[]"
+                           value="security"
+                           class="mt-1 w-4 h-4 text-[#1e4d7b] rounded border-slate-300 focus:ring-[#1e4d7b]">
+                    <span class="text-xs text-slate-700 font-medium leading-relaxed">
+                        Adequate arrangements shall be made for the safe custody of the
+                        jammers during their deployment at the examination centres.
+                    </span>
+                </label>
+                <label class="flex items-start gap-2 cursor-pointer">
+                    <input type="checkbox"
+                           name="declarations[]"
+                           value="accountability"
+                           class="mt-1 w-4 h-4 text-[#1e4d7b] rounded border-slate-300 focus:ring-[#1e4d7b]">
+                    <span class="text-xs text-slate-700 font-medium leading-relaxed">
+                        Each jammer deployed at the examination centres, as indicated in
+                        the relevant annexures, shall be duly accounted for and any
+                        discrepancy shall be reported immediately to the appropriate
+                        law enforcement agency and the Office of Secretary (Security).
+                    </span>
+                </label>
+                <label class="flex items-start gap-2 cursor-pointer">
+                    <input type="checkbox"
+                           name="declarations[]"
+                           value="non_interference"
+                           class="mt-1 w-4 h-4 text-[#1e4d7b] rounded border-slate-300 focus:ring-[#1e4d7b]">
+                    <span class="text-xs text-slate-700 font-medium leading-relaxed">
+                        While deploying the jammers, it shall be ensured by
+                        <strong>[Name of examination conducting body]</strong>
+                        that the jammers do not interfere with the existing mobile
+                        communication network outside the examination centre.
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <!-- =========================================================
+        Submit Request
+        ========================================================== -->
+        <div class="flex items-center gap-3 pt-2">
+            <button type="submit"
+                    class="btn-orange w-40 h-11 rounded-lg font-semibold text-white shadow-sm opacity-50 cursor-not-allowed transition flex items-center justify-center gap-2"
+                    id="submitBtn"
+                    onclick="submitRequest()"
+                    disabled>
+                <i class="fas fa-paper-plane"></i>
+                Submit Request
+            </button>
+            <button type="reset"
+                    class="w-40 h-11 border border-slate-300 rounded-lg text-slate-700 font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                <i class="fas fa-undo"></i>
+                Reset
+            </button>
+        </div>
+    </div>
+
+   </form>
+    </div>
+
+    <div class="space-y-6 py-6">
+        <div class="gov-card p-6">
+            <h3 class="text-base font-bold text-[#1e4d7b] mb-4 flex items-center justify-between">
+                <span>Submission progress</span>
+            </h3>
+
+            <!-- <div class="mb-6">
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-600 mb-1.5">
+                    <span>Form completeness</span>
+                    <span class="text-[#e58500] font-bold">13%</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div class="bg-[#e58500] h-2 rounded-full" style="width: 13%"></div>
+                </div>
+            </div> -->
+
+            <div class="space-y-5 relative before:absolute before:left-[15px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-200">
+                <div class="flex items-start gap-3 relative">
+                    <div class="w-8 h-8 rounded-full bg-[#1e4d7b] text-white flex items-center justify-center font-bold text-xs ring-4 ring-blue-50 z-10 shrink-0">
+                        1
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-[#1e4d7b]">Fill the application</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Organisation, examination, vendor and declarations.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 relative">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-slate-300 text-slate-500 flex items-center justify-center font-bold text-xs z-10 shrink-0">
+                        2
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-600">PDF generated</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">A government-format application PDF is generated on submit.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 relative">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-slate-300 text-slate-500 flex items-center justify-center font-bold text-xs z-10 shrink-0">
+                        3
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-600">Sign the PDF</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Download, get it signed by the authorised signatory.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 relative">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-slate-300 text-slate-500 flex items-center justify-center font-bold text-xs z-10 shrink-0">
+                        4
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-600">Upload signed PDF</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Upload to send the file for Dealing Hand verification.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="gov-card p-6 bg-amber-50/40 border-amber-200/60">
+            <div class="flex items-center gap-2 mb-3 text-[#e58500]">
+                <i class="fas fa-shield-alt text-lg"></i>
+                <h3 class="text-sm font-bold text-slate-800">Before you submit</h3>
+            </div>
+            
+            <ul class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check text-[#e58500] text-[10px] mt-1 shrink-0"></i>
+                    <span>Keep the <strong>sanction letter</strong>, examination schedule and vendor jammer specifications ready in PDF or Excel format.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check text-[#e58500] text-[10px] mt-1 shrink-0"></i>
+                    <span>On submission, the system generates the application in <strong>government letter format</strong>.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fas fa-check text-[#e58500] text-[10px] mt-1 shrink-0"></i>
+                    <span>Download it, obtain the <strong>authorised signature</strong>, and upload the signed copy — the file then moves to the Dealing Hand.</span>
+                </li>
+                <li class="flex items-start gap-2 pt-1 border-t border-amber-200/50">
+                    <i class="fas fa-info-circle text-[#1e4d7b] text-[10px] mt-1 shrink-0"></i>
+                    <span class="text-slate-500">Jammer models must be from the <strong>approved vendor list</strong> of the Wing.</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
+<script src="<?= base_url('assets/js/tost.js') ?>"></script>
+<script src="<?= base_url('assets/js/state-city.js') ?>"></script>
+<script>
+    const baseUrl = "<?= base_url() ?>";
+</script>
+<script>
+    function toggleExamFields(isSingle) {
+        const singleContainer = document.getElementById('single-exam-container');
+        const multipleContainer = document.getElementById('multiple-exam-container');
+        
+        if (isSingle) {
+            singleContainer.classList.remove('hidden');
+            multipleContainer.classList.add('hidden');
+        } else {
+            singleContainer.classList.add('hidden');
+            multipleContainer.classList.remove('hidden');
+        }
+    }
+
+    function formatDateInput(input) {
+        let val = input.value.replace(/\D/g, '');
+        if (val.length > 8) val = val.substring(0, 8);
+        if (val.length >= 5) {
+            input.value = val.substring(0, 2) + '/' + val.substring(2, 4) + '/' + val.substring(4);
+        } else if (val.length >= 3) {
+            input.value = val.substring(0, 2) + '/' + val.substring(2);
+        } else {
+            input.value = val;
+        }
+    }
+
+    function syncPickerToText(picker) {
+        if (!picker.value) return;
+        const [year, month, day] = picker.value.split('-');
+        document.getElementById('examDateText').value = `${day}/${month}/${year}`;
+    }
+
+</script>
+<script>
+$(document).ready(function () {
+    // ============================================================
+    // ENABLE/DISABLE SUBMIT BUTTON BASED ON CHECKBOXES
+    // ============================================================
+    function toggleSubmitButton() {
+        const checkboxes = $('input[name="declarations[]"]');
+        const checkedCount = checkboxes.filter(':checked').length;
+        const submitButton = $('#submitBtn');
+        
+        if (checkedCount === 3) {
+            submitButton.prop('disabled', false);
+            submitButton.removeClass('opacity-50 cursor-not-allowed');
+            submitButton.addClass('hover:opacity-90');
+        } else {
+            submitButton.prop('disabled', true);
+            submitButton.addClass('opacity-50 cursor-not-allowed');
+            submitButton.removeClass('hover:opacity-90');
+        }
+    }
+
+    toggleSubmitButton();
+    $(document).on('change', 'input[name="declarations[]"]', function() {
+        toggleSubmitButton();
+    });
+
+    // ============================================================
+    // SINGLE / MULTIPLE EXAM TOGGLE
+    // ============================================================
+    $('input[name="single_exam"]').on('change', function() {
+        if ($(this).val() === 'yes') {
+            $('#single-exam-container').removeClass('hidden');
+            $('#multiple-exam-container').addClass('hidden');
+            enableSection('#single-exam-container');
+            disableSection('#multiple-exam-container');
+        } else {
+            $('#single-exam-container').addClass('hidden');
+            $('#multiple-exam-container').removeClass('hidden');
+            disableSection('#single-exam-container');
+            enableSection('#multiple-exam-container');
+            if ($('#multiple-exams-list .exam-item').length === 0) {
+                addExamination();
+            }
+        }
+    });
+
+    function enableSection(selector) {
+        $(selector).find('input, textarea, select').prop('disabled', false);
+        $(selector).find('button').prop('disabled', false);
+    }
+
+    function disableSection(selector) {
+        $(selector).find('input, textarea, select').prop('disabled', true);
+        $(selector).find('button').prop('disabled', true);
+    }
+
+    // ============================================================
+    // DATE PICKER FUNCTIONS
+    // ============================================================
+    $(document).on('input', '.date-text', function() {
+        let value = $(this).val().replace(/\D/g, '');
+        if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2);
+        }
+        if (value.length > 5) {
+            value = value.substring(0, 5) + '/' + value.substring(5, 9);
+        }
+        $(this).val(value);
+    });
+
+    $(document).on('change', '.date-picker', function() {
+        let date = $(this).val();
+        if (!date) return;
+        let parts = date.split('-');
+        if (parts.length === 3) {
+            let formatted = parts[2] + '/' + parts[1] + '/' + parts[0];
+            $(this).closest('.relative').find('.date-text').val(formatted);
+        }
+    });
+
+    $(document).on('blur', '.date-text', function() {
+        let value = $(this).val();
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return;
+        let parts = value.split('/');
+        let dateValue = parts[2] + '-' + parts[1] + '-' + parts[0];
+        $(this).closest('.relative').find('.date-picker').val(dateValue);
+    });
+
+    // ============================================================
+    // STATE & DISTRICT FUNCTIONS
+    // ============================================================
+    function initStateSelect2(element) {
+        let $element = $(element);
+        if (!$element.length) return;
+        if ($element.hasClass('select2-hidden-accessible')) {
+            $element.select2('destroy');
+        }
+        $element.select2({
+            width: '100%',
+            placeholder: 'Select State / UT',
+            allowClear: true
+        });
+    }
+
+    function initDistrictSelect2(element) {
+        let $element = $(element);
+        if (!$element.length) return;
+        if ($element.hasClass('select2-hidden-accessible')) {
+            $element.select2('destroy');
+        }
+        $element.select2({
+            width: '100%',
+            placeholder: 'Select District / City',
+            allowClear: true
+        });
+    }
+
+    function loadIndianStatesForElement(stateSelect, selectedState = '') {
+        let $stateSelect = $(stateSelect);
+        if (!$stateSelect.length) return;
+
+        $.ajax({
+            url: baseUrl + '/location/get-states',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                $stateSelect.empty();
+                $stateSelect.append('<option value="">Select State / UT</option>');
+
+                if (response.status && response.data && response.data.length) {
+                    $.each(response.data, function(index, state) {
+                        $stateSelect.append($('<option>', {
+                            value: state.id,
+                            text: state.state_name,
+                            selected: String(state.id) === String(selectedState)
+                        }));
+                    });
+                }
+
+                initStateSelect2($stateSelect);
+
+                if (selectedState) {
+                    let $centre = $stateSelect.closest('.centre-item, .exam-centre');
+                    let $districtSelect = $centre.find('.single-centre-district, .multiple-centre-district').first();
+
+                    if ($districtSelect.length) {
+                        loadDistricts(selectedState, $districtSelect);
+                    }
+                }
+            },
+            error: function(xhr) {
+                console.error('State loading error:', xhr.responseText);
+                $stateSelect.empty();
+                $stateSelect.append('<option value="">Unable to load states</option>');
+                initStateSelect2($stateSelect);
+            }
+        });
+    }
+
+    function loadDistricts(stateId, districtElement) {
+        let csrfToken = getCSRFToken();
+
+        $.ajax({
+            url: baseUrl + '/location/get-cities',
+            type: "POST",
+            dataType: "json",
+            data: {
+                state_id: stateId,
+                csrf_test_name: csrfToken
+            },
+            success: function(response) {
+                updateCSRF(response);
+
+                let $district = $(districtElement);
+                $district.empty();
+                $district.append('<option value="">Select District / City</option>');
+
+                if (response.status === true && Array.isArray(response.data) && response.data.length > 0) {
+                    $.each(response.data, function(index, district) {
+                        $district.append(
+                            $('<option>', {
+                                value: district.id,
+                                text: district.city_name
+                            })
+                        );
+                    });
+                    $district.prop('disabled', false);
+                } else {
+                    $district.append('<option value="">No District / City Found</option>');
+                    $district.prop('disabled', false);
+                }
+
+                initDistrictSelect2($district);
+                $district.trigger('change');
+            },
+            error: function(xhr) {
+                console.error('District loading error:', xhr.status, xhr.responseText);
+                let $district = $(districtElement);
+                $district.empty();
+                $district.append('<option value="">Unable to load District / City</option>');
+                $district.prop('disabled', true);
+                initDistrictSelect2($district);
+            }
+        });
+    }
+
+    // ============================================================
+    // STATE CHANGE HANDLER
+    // ============================================================
+    $(document).on('change', '.single-centre-state, .multiple-centre-state', function() {
+        let stateId = $(this).val();
+        let $centre = $(this).closest('.centre-item, .exam-centre');
+        let $districtSelect = $centre.find('.single-centre-district, .multiple-centre-district').first();
+        if (!$districtSelect.length) return;
+        
+        $districtSelect.val(null);
+        $districtSelect.empty();
+        $districtSelect.append('<option value="">Select District / City</option>');
+        $districtSelect.prop('disabled', true);
+        initDistrictSelect2($districtSelect);
+        
+        if (stateId) {
+            loadDistricts(stateId, $districtSelect);
+        }
+    });
+
+    // ============================================================
+    // SINGLE CENTRE FUNCTIONS
+    // ============================================================
+    $('#addSingleCentre').on('click', function() {
+        let html = `
+            <div class="centre-item border border-slate-200 rounded-xl p-4 bg-slate-50 mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-[#1e4d7b]">Additional Centre</span>
+                    <button type="button" class="remove-centre text-red-500 hover:text-red-700 text-xs font-semibold transition">
+                        <i class="fas fa-trash-alt mr-1"></i> Remove
+                    </button>
+                </div>
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                    <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                        <input type="checkbox" name="single_centre_not_available[]" class="centre-not-available w-4 h-4 text-[#1e4d7b] rounded border-slate-300 focus:ring-2 focus:ring-[#1e4d7b]">
+                        <span class="text-xs font-semibold text-slate-700">Centre Information Not Available</span>
+                    </label>
+                </div>
+                <div class="centre-details grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Centre Name</label>
+                        <input type="text" name="single_centre_name[]" class="centre-name w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d7b]" placeholder="Enter centre name">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Centre Coordinates</label>
+                        <input type="text" name="single_centre_coordinates[]" class="centre-coordinates w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d7b]" placeholder="e.g. 28.6139, 77.2090">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">State</label>
+                        <select name="single_centre_state[]" class="single-centre-state w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm">
+                            <option value="">Select State / UT</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">District</label>
+                        <select name="single_centre_district[]" class="single-centre-district w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm" disabled>
+                            <option value="">Select District / City</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2 centre-address-wrapper">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Centre Address</label>
+                        <textarea name="single_centre_address[]" rows="2" class="centre-address w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm" placeholder="Enter complete centre address..."></textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+        $('#single-centres-container').append(html);
+        let $newCentre = $('#single-centres-container .centre-item:last-child');
+        let $stateSelect = $newCentre.find('.single-centre-state');
+        let $districtSelect = $newCentre.find('.single-centre-district');
+        loadIndianStatesForElement($stateSelect);
+        initDistrictSelect2($districtSelect);
+    });
+
+    $(document).on('click', '#single-centres-container .remove-centre', function() {
+        $(this).closest('.centre-item').remove();
+    });
+
+    // ============================================================
+    // MULTIPLE EXAM FUNCTIONS
+    // ============================================================
+    let examCounter = 0;
+
+    $('#addExam').on('click', function() {
+        addExamination();
+    });
+
+    function addExamination() {
+        examCounter++;
+        let examId = examCounter;
+        let html = `
+            <div class="exam-item border border-slate-200 rounded-xl p-5 bg-slate-50 mb-4" data-exam-id="${examId}">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="flex items-center justify-center w-7 h-7 rounded-full bg-[#1e4d7b] text-white text-xs font-bold">${examId}</span>
+                        <span class="text-sm font-bold text-[#1e4d7b]">Examination ${examId}</span>
+                    </div>
+                    <button type="button" class="remove-examination text-red-500 hover:text-red-700 text-xs font-semibold">
+                        <i class="fas fa-trash-alt mr-1"></i> Remove Examination
+                    </button>
+                </div>
+                <div class="centre-details grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Name of examination</label>
+                        <input type="text" name="multiple_exam_name[]" class="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-sm" placeholder="Enter examination name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Date of examination</label>
+                        <div class="relative">
+                            <input type="text" name="multiple_exam_date[]" placeholder="dd/mm/yyyy" maxlength="10" class="date-text w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-sm pr-10">
+                            <input type="date" class="date-picker absolute right-2 top-1/2 -translate-y-1/2 opacity-0 w-8 h-8 cursor-pointer z-10">
+                            <i class="fas fa-calendar-alt absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="block text-sm font-semibold text-slate-700">Centre of examination</label>
+                        <button type="button" class="add-exam-centre inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-[#1e4d7b] text-[#1e4d7b] text-xs font-semibold rounded-lg transition">
+                            <i class="fas fa-plus"></i> Add Centre
+                        </button>
+                    </div>
+                    <div class="exam-centres-container">
+                        ${getCentreHTML(examId, 1)}
+                    </div>
+                </div>
+            </div>
+        `;
+        $('#multiple-exams-list').append(html);
+        let $newExam = $('#multiple-exams-list .exam-item:last-child');
+        $newExam.find('.exam-centre').each(function() {
+            let $stateSelect = $(this).find('.multiple-centre-state');
+            let $districtSelect = $(this).find('.multiple-centre-district');
+            loadIndianStatesForElement($stateSelect);
+            initDistrictSelect2($districtSelect);
+        });
+    }
+
+    function getCentreHTML(examId, centreNo) {
+        return `
+            <div class="exam-centre border border-slate-200 rounded-lg p-4 bg-white mb-3">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-bold text-slate-600">Centre ${centreNo}</span>
+                    ${centreNo > 1 ? `
+                    <button type="button" class="remove-exam-centre text-red-500 hover:text-red-700 text-xs font-semibold">
+                        <i class="fas fa-trash-alt mr-1"></i> Remove
+                    </button>` : ''}
+                </div>
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                    <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                        <input type="checkbox" name="multiple_centre_not_available[${examId}][]" class="centre-not-available w-4 h-4 text-[#1e4d7b] rounded border-slate-300">
+                        <span class="text-xs font-semibold text-slate-700">Centre Information Not Available</span>
+                    </label>
+                </div>
+                <div class="centre-details grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Centre Name</label>
+                        <input type="text" name="multiple_centre_name[${examId}][]" class="centre-name w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm" placeholder="Enter centre name">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Centre Coordinates</label>
+                        <input type="text" name="multiple_centre_coordinates[${examId}][]" class="centre-coordinates w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm" placeholder="e.g. 28.6139, 77.2090">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">State / UT</label>
+                        <select name="multiple_centre_state[${examId}][]" class="multiple-centre-state w-full">
+                            <option value="">Select State / UT</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">City / District</label>
+                        <select name="multiple_centre_district[${examId}][]" class="multiple-centre-district w-full" disabled>
+                            <option value="">Select District / City</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Centre Address</label>
+                        <textarea name="multiple_centre_address[${examId}][]" rows="2" class="centre-address w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm" placeholder="Enter complete centre address..."></textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    $(document).on('click', '.add-exam-centre', function() {
+        let $examItem = $(this).closest('.exam-item');
+        let examId = $examItem.data('exam-id');
+        let $centreContainer = $examItem.find('.exam-centres-container');
+        let centreNo = $centreContainer.find('.exam-centre').length + 1;
+        let newCentreHtml = getCentreHTML(examId, centreNo);
+        $centreContainer.append(newCentreHtml);
+        let $newCentre = $centreContainer.find('.exam-centre:last-child');
+        let $stateSelect = $newCentre.find('.multiple-centre-state');
+        let $districtSelect = $newCentre.find('.multiple-centre-district');
+        loadIndianStatesForElement($stateSelect);
+        initDistrictSelect2($districtSelect);
+    });
+
+    $(document).on('click', '.remove-exam-centre', function() {
+        let $examItem = $(this).closest('.exam-item');
+        $(this).closest('.exam-centre').remove();
+        $examItem.find('.exam-centre').each(function(index) {
+            $(this).find('.text-xs.font-bold.text-slate-600').text('Centre ' + (index + 1));
+        });
+    });
+
+    $(document).on('click', '.remove-examination', function() {
+        $(this).closest('.exam-item').remove();
+        $('#multiple-exams-list .exam-item').each(function(index) {
+            let number = index + 1;
+            $(this).attr('data-exam-id', number);
+            $(this).find('.flex.items-center.gap-2 span:last-child').text('Examination ' + number);
+            $(this).find('.rounded-full').text(number);
+        });
+        $('#multiple-exams-list .exam-item').each(function(index) {
+            let newExamId = index + 1;
+            $(this).find('[name^="multiple_centre_"]').each(function() {
+                let name = $(this).attr('name');
+                if (!name) return;
+                name = name.replace(/multiple_centre_([^[]+)\[\d+\]/, 'multiple_centre_$1[' + newExamId + ']');
+                $(this).attr('name', name);
+            });
+        });
+    });
+
+    // ============================================================
+    // CENTRE NOT AVAILABLE TOGGLE - FIXED FOR ALL CENTRES
+    // ============================================================
+    $(document).on('change', '.centre-not-available', function() {
+        let $centre = $(this).closest('.centre-item, .exam-centre');
+        let $details = $centre.find('.centre-details');
+        
+        if ($(this).is(':checked')) {
+            $details.slideUp(300);
+            $details.find('input, select, textarea').each(function() {
+                $(this).prop('disabled', true);
+                if ($(this).is('select')) {
+                    $(this).val('').trigger('change');
+                } else {
+                    $(this).val('');
+                }
+            });
+            $details.find('.single-centre-state, .single-centre-district, .multiple-centre-state, .multiple-centre-district').each(function() {
+                $(this).val(null).trigger('change');
+                if ($(this).hasClass('single-centre-state') || $(this).hasClass('multiple-centre-state')) {
+                    initStateSelect2($(this));
+                } else {
+                    initDistrictSelect2($(this));
+                }
+            });
+        } else {
+            $details.slideDown(300);
+            $details.find('input, select, textarea').prop('disabled', false);
+            
+            let $state = $details.find('.single-centre-state, .multiple-centre-state').first();
+            let $city = $details.find('.single-centre-district, .multiple-centre-district').first();
+            
+            if ($state.val()) {
+                loadDistricts($state.val(), $city);
+            } else {
+                $city.prop('disabled', true);
+                $city.empty();
+                $city.append('<option value="">Select District / City</option>');
+                initDistrictSelect2($city);
+            }
+            
+            $details.find('.single-centre-state, .multiple-centre-state').each(function() {
+                initStateSelect2($(this));
+            });
+            $details.find('.single-centre-district, .multiple-centre-district').each(function() {
+                initDistrictSelect2($(this));
+            });
+        }
+    });
+
+    // ============================================================
+    // EXCEL FILE NAME DISPLAY - FIXED
+    // ============================================================
+    $(document).on('change', '.excel-input', function() {
+        let fileName = '';
+        let $container = $(this).closest('.flex');
+        
+        // Find the file name display element
+        let $display = $container.find('.excel-file-name');
+        
+        // If not found, try to find any span in the container
+        if ($display.length === 0) {
+            $display = $container.find('span:last-child');
+        }
+        
+        // If still not found, look in the parent div
+        if ($display.length === 0) {
+            $display = $container.closest('div').find('.excel-file-name');
+        }
+        
+        // If still not found, look for any span with text
+        if ($display.length === 0) {
+            $display = $container.find('span').filter(function() {
+                return $(this).text().includes('No file selected') || $(this).text().includes('file selected');
+            });
+        }
+        
+        if (this.files && this.files.length > 0) {
+            fileName = this.files[0].name;
+            $display.text(fileName);
+            $display.removeClass('text-slate-400');
+            $display.addClass('text-emerald-600 font-medium');
+            
+            // Add remove button if not exists
+            let $removeBtn = $container.find('.file-remove-btn');
+            if ($removeBtn.length === 0) {
+                $removeBtn = $('<button type="button" class="file-remove-btn text-red-500 hover:text-red-700 text-xs font-semibold ml-2"><i class="fas fa-times"></i></button>');
+                $container.append($removeBtn);
+            }
+            $removeBtn.show();
+        } else {
+            $display.text('No file selected');
+            $display.removeClass('text-emerald-600 font-medium');
+            $display.addClass('text-slate-400');
+            $container.find('.file-remove-btn').hide();
+        }
+    });
+
+    // Remove file functionality for Excel
+    $(document).on('click', '.file-remove-btn', function() {
+        let $container = $(this).closest('.flex');
+        let $fileInput = $container.find('.excel-input');
+        
+        // Reset the file input
+        $fileInput.val('');
+        // Trigger change event to update display
+        $fileInput.trigger('change');
+        
+        // Hide remove button
+        $(this).hide();
+    });
+
+    // ============================================================
+    // ORGANISATION SELECT2
+    // ============================================================
+    $('#organisation_name').select2({
+        width: '100%',
+        placeholder: 'Select or type organisation name',
+        tags: true,
+        allowClear: true,
+        minimumResultsForSearch: 0,
+        createTag: function(params) {
+            let term = $.trim(params.term);
+            if (term === '') return null;
+            return { id: term, text: term, newTag: true };
+        }
+    });
+
+    $('#organisation_type').select2({
+        width: '100%',
+        placeholder: 'Select or type organisation type',
+        tags: true,
+        allowClear: true,
+        minimumResultsForSearch: 0,
+        createTag: function(params) {
+            let term = $.trim(params.term);
+            if (term === '') return null;
+            return { id: term, text: term, newTag: true };
+        }
+    });
+
+    $('#organisation_name').on('change', function() {
+        let $selectedOption = $(this).find('option:selected');
+        let organizationId = $selectedOption.attr('data-organization-id');
+        let orgTypeFromOrganisation = $selectedOption.attr('data-org-type');
+        
+        if (organizationId) {
+            $('#organization_id').val(organizationId);
+        } else {
+            $('#organization_id').val('');
+        }
+        
+        if (orgTypeFromOrganisation) {
+            let $typeOption = $('#organisation_type option').filter(function() {
+                return $(this).attr('data-type-id') == orgTypeFromOrganisation;
+            });
+            if ($typeOption.length) {
+                $('#organisation_type').val($typeOption.val()).trigger('change');
+            }
+        }
+    });
+
+    $('#organisation_type').on('change', function() {
+        let $selectedOption = $(this).find('option:selected');
+        let typeId = $selectedOption.attr('data-type-id');
+        if (typeId) {
+            $('#org_type').val(typeId);
+        } else {
+            $('#org_type').val('');
+        }
+    });
+
+    // ============================================================
+    // INITIAL SETUP
+    // ============================================================
+    $('#single-centres-container').find('.centre-item').each(function() {
+        let $centre = $(this);
+        let $state = $centre.find('.single-centre-state');
+        let $city = $centre.find('.single-centre-district');
+        if ($state.length) {
+            let selectedState = $state.attr('data-selected') || $state.val() || '';
+            loadIndianStatesForElement($state, selectedState);
+        }
+        if ($city.length) {
+            initDistrictSelect2($city);
+        }
+    });
+
+    $('#multiple-exams-list').find('.exam-centre').each(function() {
+        let $centre = $(this);
+        let $state = $centre.find('.multiple-centre-state');
+        let $city = $centre.find('.multiple-centre-district');
+        if ($state.length) {
+            let selectedState = $state.attr('data-selected') || $state.val() || '';
+            loadIndianStatesForElement($state, selectedState);
+        }
+        if ($city.length) {
+            initDistrictSelect2($city);
+        }
+    });
+
+    // Initialize based on selected exam type
+    let selectedExam = $('input[name="single_exam"]:checked').val();
+    if (selectedExam === 'yes') {
+        $('#single-exam-container').removeClass('hidden');
+        $('#multiple-exam-container').addClass('hidden');
+        enableSection('#single-exam-container');
+        disableSection('#multiple-exam-container');
+    } else if (selectedExam === 'no') {
+        $('#single-exam-container').addClass('hidden');
+        $('#multiple-exam-container').removeClass('hidden');
+        disableSection('#single-exam-container');
+        enableSection('#multiple-exam-container');
+        if ($('#multiple-exams-list .exam-item').length === 0) {
+            addExamination();
+        }
+    }
+
+    // ============================================================
+    // VENDOR FUNCTIONS
+    // ============================================================
+    let vendorCount = 1;
+
+    function getCSRFToken() {
+        return $('input[name="csrf_test_name"]').val() || '';
+    }
+
+    function updateCSRF(response) {
+        if (response && response.csrf_hash) {
+            $('input[name="csrf_test_name"]').val(response.csrf_hash);
+        }
+    }
+
+    function initializeVendorDropdowns() {
+        $('.model-select').each(function () {
+            initializeModelSelect($(this));
+        });
+    }
+
+    function initializeModelSelect($select) {
+        if ($select.hasClass('select2-hidden-accessible')) {
+            $select.select2('destroy');
+        }
+
+        $select.select2({
+            placeholder: 'Select jammer model',
+            allowClear: true,
+            width: '100%'
+        });
+    }
+
+    function loadVendors() {
+        $.ajax({
+            url: baseUrl + '/getVendors',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.status) {
+                    $('.vendor-select').each(function () {
+                        populateVendorSelect($(this), response.vendors);
+                    });
+                    updateCSRF(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading vendors:', error);
+                populateVendorSelectFallback($('.vendor-select'));
+            }
+        });
+    }
+
+    function populateVendorSelect($select, vendors) {
+        const currentValue = $select.val();
+        $select.empty();
+        $select.append('<option value="">Select vendor</option>');
+
+        $.each(vendors, function (index, vendor) {
+            $select.append(
+                $('<option>', {
+                    value: vendor.id,
+                    text: vendor.vendor_name
+                })
+            );
+        });
+
+        if (currentValue) {
+            $select.val(currentValue);
+        }
+    }
+
+    function populateVendorSelectFallback($select) {
+        const fallbackVendors = [
+            { id: 1, vendor_name: 'Bharat Secure Systems Pvt. Ltd.' },
+            { id: 2, vendor_name: 'Netra Defence Electronics' },
+            { id: 3, vendor_name: 'Shakti Communication Works' },
+            { id: 4, vendor_name: 'Indus RF Technologies' }
+        ];
+
+        $select.each(function () {
+            populateVendorSelect($(this), fallbackVendors);
+        });
+    }
+
+    window.addVendor = function () {
+        vendorCount++;
+
+        const container = document.getElementById('vendorContainer');
+        const vendor = document.createElement('div');
+        vendor.className = 'vendor-item border border-slate-200 rounded-xl p-4 mb-4 bg-slate-50';
+
+        vendor.innerHTML = `
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="font-semibold text-[#1e4d7b]">
+                    <i class="fas fa-building mr-1"></i>
+                    Vendor ${vendorCount}
+                </h4>
+                <button
+                    type="button"
+                    onclick="removeVendor(this)"
+                    class="text-red-500 hover:text-red-700 text-sm font-semibold">
+                    <i class="fas fa-trash-alt mr-1"></i>
+                    Remove
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        Name of vendor
+                    </label>
+                    <select
+                        name="vendor_id[]"
+                        class="vendor-select w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm bg-white"
+                        required>
+                        <option value="">
+                            Select vendor
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                        Jammer model
+                    </label>
+                    <select
+                        name="jammer_model_ids[]"
+                        class="model-select w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d7b] transition text-sm bg-white"
+                        required>
+                        <option value="">
+                            Select vendor first
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Technical specifications of jammers
+                </label>
+                <div class="flex items-center gap-2">
+                    <label class="flex-1 cursor-pointer flex items-center justify-center px-4 py-2 border border-dashed border-slate-300 bg-white hover:bg-slate-100 rounded-lg transition text-slate-600 text-sm font-medium">
+                        <i class="fas fa-file-pdf text-[#e58500] mr-2"></i>
+                        <span>Choose file</span>
+                        <input
+                            type="file"
+                            name="technical_specifications[]"
+                            accept=".pdf"
+                            class="hidden tech-file-input"
+                            onchange="showFileName(this)">
+                    </label>
+                    <span class="file-name text-xs text-slate-400">
+                        No file selected
+                    </span>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(vendor);
+
+        const $newModelSelect = $(vendor).find('.model-select');
+        initializeModelSelect($newModelSelect);
+
+        $.ajax({
+            url: baseUrl + '/getVendors',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.status) {
+                    populateVendorSelect($(vendor).find('.vendor-select'), response.vendors);
+                    updateCSRF(response);
+                }
+            },
+            error: function () {
+                populateVendorSelectFallback($(vendor).find('.vendor-select'));
+            }
+        });
+
+        updateRemoveButtons();
+    };
+
+    window.removeVendor = function (button) {
+        const vendor = button.closest('.vendor-item');
+        if (vendor) {
+            vendor.remove();
+        }
+        renumberVendors();
+        updateRemoveButtons();
+    };
+
+    function renumberVendors() {
+        const vendors = document.querySelectorAll('.vendor-item');
+        vendors.forEach(function (vendor, index) {
+            const title = vendor.querySelector('h4');
+            if (title) {
+                title.innerHTML = '<i class="fas fa-building mr-1"></i> Vendor ' + (index + 1);
+            }
+        });
+        vendorCount = vendors.length;
+    }
+
+    function updateRemoveButtons() {
+        const vendors = document.querySelectorAll('.vendor-item');
+        vendors.forEach(function (vendor) {
+            const removeButton = vendor.querySelector('button[onclick="removeVendor(this)"]');
+            if (!removeButton) {
+                return;
+            }
+            if (vendors.length === 1) {
+                removeButton.classList.add('hidden');
+            } else {
+                removeButton.classList.remove('hidden');
+            }
+        });
+    }
+
+    function loadModels(vendorId, $modelSelect) {
+        $modelSelect.empty();
+
+        if (!vendorId) {
+            $modelSelect.append('<option value="">Select vendor first</option>');
+            initializeModelSelect($modelSelect);
+            return;
+        }
+
+        $modelSelect.append('<option value="">Loading models...</option>');
+        initializeModelSelect($modelSelect);
+
+        const csrfToken = getCSRFToken();
+
+        $.ajax({
+            url: baseUrl + '/getJammerModelsByVendor',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                vendor_id: vendorId,
+                csrf_test_name: csrfToken
+            },
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            success: function (response) {
+                updateCSRF(response);
+                $modelSelect.empty();
+
+                if (response.status && response.models && response.models.length > 0) {
+                    $modelSelect.append('<option value="">Select jammer model</option>');
+
+                    $.each(response.models, function (index, model) {
+                        $modelSelect.append(
+                            $('<option>', {
+                                value: model.id,
+                                text: model.name
+                            })
+                        );
+                    });
+                } else {
+                    $modelSelect.append('<option value="">No models available</option>');
+                }
+
+                initializeModelSelect($modelSelect);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading jammer models:', error);
+                $modelSelect.empty();
+                $modelSelect.append('<option value="">Error loading models</option>');
+                initializeModelSelect($modelSelect);
+            }
+        });
+    }
+
+    $(document).on('change', '.vendor-select', function () {
+        const vendorId = $(this).val();
+        const $vendorItem = $(this).closest('.vendor-item');
+        const $modelSelect = $vendorItem.find('.model-select');
+        loadModels(vendorId, $modelSelect);
+    });
+
+    // ============================================================
+    // SHOW FILE NAME - FIXED for Vendor Documents
+    // ============================================================
+    window.showFileName = function (input) {
+        const $container = $(input).closest('.flex');
+        let $fileName = $container.find('.file-name');
+        
+        // If not found, try to find any span in the container
+        if ($fileName.length === 0) {
+            $fileName = $container.find('span:last-child');
+        }
+        
+        // If still not found, look in the parent div
+        if ($fileName.length === 0) {
+            $fileName = $container.closest('div').find('.file-name');
+        }
+        
+        if (input.files && input.files.length > 0) {
+            $fileName.text(input.files[0].name);
+            $fileName.removeClass('text-slate-400');
+            $fileName.addClass('text-green-600 font-medium');
+        } else {
+            $fileName.text('No file selected');
+            $fileName.removeClass('text-green-600 font-medium');
+            $fileName.addClass('text-slate-400');
+        }
+    };
+
+    // Initialize vendors
+    loadVendors();
+    initializeVendorDropdowns();
+
+    // ============================================================
+    // FORM SUBMIT HANDLER
+    // ============================================================
+    window.submitRequest = function() {
+        const form = document.getElementById('permissionForm');
+        
+        if (!form) {
+            showToast('error', 'Form not found!');
+            return;
+        }
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const checkedDeclarations = $('input[name="declarations[]"]:checked').length;
+        if (checkedDeclarations < 3) {
+            showToast('warning', 'Please accept all declarations before submitting.');
+            return;
+        }
+
+        const submitBtn = $('#submitBtn');
+        const originalText = submitBtn.html();
+        submitBtn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...');
+        submitBtn.prop('disabled', true);
+
+        const formData = new FormData(form);
+
+        const singleExam = $('input[name="single_exam"]:checked').val();
+        if (!singleExam) {
+            submitBtn.html(originalText);
+            submitBtn.prop('disabled', false);
+            showToast('warning', 'Please select exam type.');
+            return;
+        }
+        formData.append('single_exam', singleExam);
+
+        // SINGLE EXAM DATA
+        if (singleExam === 'yes') {
+            formData.append('single_exam_name', $('input[name="single_exam_name"]').val() || '');
+            formData.append('single_exam_date', $('input[name="single_exam_date"]').val() || '');
+
+            const singleCentreNames = [];
+            const singleCentreCoordinates = [];
+            const singleCentreStates = [];
+            const singleCentreDistricts = [];
+            const singleCentreAddresses = [];
+
+            $('input[name="single_centre_name[]"]').each(function() {
+                singleCentreNames.push($(this).val() || '');
+            });
+            $('input[name="single_centre_coordinates[]"]').each(function() {
+                singleCentreCoordinates.push($(this).val() || '');
+            });
+            $('select[name="single_centre_state[]"]').each(function() {
+                singleCentreStates.push($(this).val() || '');
+            });
+            $('select[name="single_centre_district[]"]').each(function() {
+                singleCentreDistricts.push($(this).val() || '');
+            });
+            $('textarea[name="single_centre_address[]"]').each(function() {
+                singleCentreAddresses.push($(this).val() || '');
+            });
+
+            formData.append('single_centre_names_json', JSON.stringify(singleCentreNames));
+            formData.append('single_centre_coordinates_json', JSON.stringify(singleCentreCoordinates));
+            formData.append('single_centre_states_json', JSON.stringify(singleCentreStates));
+            formData.append('single_centre_districts_json', JSON.stringify(singleCentreDistricts));
+            formData.append('single_centre_addresses_json', JSON.stringify(singleCentreAddresses));
+        }
+
+        // MULTIPLE EXAM DATA
+        const multipleExamNames = [];
+        const multipleExamDates = [];
+        const multipleCentreNames = [];
+        const multipleCentreCoordinates = [];
+        const multipleCentreStates = [];
+        const multipleCentreDistricts = [];
+        const multipleCentreAddresses = [];
+
+        $('.exam-item').each(function() {
+            const examName = $(this).find('input[name="multiple_exam_name[]"]').val() || '';
+            const examDate = $(this).find('input[name="multiple_exam_date[]"]').val() || '';
+            multipleExamNames.push(examName);
+            multipleExamDates.push(examDate);
+
+            const centres = [];
+            $(this).find('.exam-centre').each(function() {
+                const centre = {
+                    name: $(this).find('.centre-name').val() || '',
+                    coordinates: $(this).find('.centre-coordinates').val() || '',
+                    state: $(this).find('.multiple-centre-state').val() || '',
+                    district: $(this).find('.multiple-centre-district').val() || '',
+                    address: $(this).find('.centre-address').val() || '',
+                    not_available: $(this).find('input[type="checkbox"]').is(':checked') ? 1 : 0
+                };
+                centres.push(centre);
+            });
+            multipleCentreNames.push(centres.map(c => c.name));
+            multipleCentreCoordinates.push(centres.map(c => c.coordinates));
+            multipleCentreStates.push(centres.map(c => c.state));
+            multipleCentreDistricts.push(centres.map(c => c.district));
+            multipleCentreAddresses.push(centres.map(c => c.address));
+        });
+
+        formData.append('multiple_exam_names_json', JSON.stringify(multipleExamNames));
+        formData.append('multiple_exam_dates_json', JSON.stringify(multipleExamDates));
+        formData.append('multiple_centre_names_json', JSON.stringify(multipleCentreNames));
+        formData.append('multiple_centre_coordinates_json', JSON.stringify(multipleCentreCoordinates));
+        formData.append('multiple_centre_states_json', JSON.stringify(multipleCentreStates));
+        formData.append('multiple_centre_districts_json', JSON.stringify(multipleCentreDistricts));
+        formData.append('multiple_centre_addresses_json', JSON.stringify(multipleCentreAddresses));
+
+        // VENDOR DATA
+        const vendorIds = [];
+        const jammerModelIds = [];
+
+        $('.vendor-item').each(function() {
+            const vendorId = $(this).find('select[name="vendor_id[]"]').val() || '';
+            const jammerModelId = $(this).find('select[name="jammer_model_ids[]"]').val() || '';
+            
+            vendorIds.push(vendorId);
+            jammerModelIds.push(jammerModelId);
+        });
+
+        formData.append('vendor_ids_json', JSON.stringify(vendorIds));
+        formData.append('jammer_ids_json', JSON.stringify(jammerModelIds));
+
+        // DECLARATIONS
+        const declarations = [];
+        $('input[name="declarations[]"]:checked').each(function() {
+            declarations.push($(this).val());
+        });
+        formData.append('declarations_json', JSON.stringify(declarations));
+
+        // ORGANISATION DATA
+        const organisationName = $('#organisation_name').val() || '';
+        const organisationType = $('#organisation_type').val() || '';
+        formData.append('organisation_name', organisationName);
+        formData.append('organisation_type_name', organisationType);
+
+        // MAKE AJAX REQUEST
+        $.ajax({
+            url: baseUrl + '/submit-request',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            cache: false,
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="csrf_test_name"]').val()
+            },
+            success: function(response) {
+                submitBtn.html(originalText);
+                submitBtn.prop('disabled', false);
+
+                if (response.success) {
+                    showToast('success', response.message || 'Application submitted successfully!');
+                    
+                    setTimeout(function() {
+                        if (response.redirect_url) {
+                            window.location.href = response.redirect_url;
+                        }
+                    }, 1500);
+                } else {
+                    showToast('error', response.message || 'Something went wrong. Please try again.');
+                }
+            },
+            error: function(xhr, status, error) {
+                submitBtn.html(originalText);
+                submitBtn.prop('disabled', false);
+
+                let errorMessage = 'An error occurred while submitting the form.';
+                
+                if (xhr.status === 403) {
+                    errorMessage = 'Security token expired. Please refresh the page and try again.';
+                    setTimeout(function() {
+                        location.reload();
+                    }, 10000);
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+
+                showToast('error', errorMessage);
+                console.error('Error:', xhr.responseText);
+            }
+        });
+    };
+
+    // Toast notification function
+   /* function showToast(type, message) {
+        // Implement your toast notification here
+        alert(type + ': ' + message);
+    }*/
+
+    console.log('Application initialized successfully.');
+});
+</script>
+
+<?php
+$page_content = ob_get_clean();
+include dirname(__DIR__) . '/dashboard.php';
+?>

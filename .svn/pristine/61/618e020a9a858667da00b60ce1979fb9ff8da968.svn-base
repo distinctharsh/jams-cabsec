@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class RequestModel extends Model
+{
+    protected $table = 'application';
+    protected $primaryKey = 'id';
+
+    protected $useAutoIncrement = true;
+    protected $returnType = 'array';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'app_no',
+        'user_id',
+        'adequate_arrangement_check',
+        'jammer_accounted',
+        'non_intereference',
+        'created_at',
+        'current_status',
+        'isactive',
+        'is_single_exam',
+        'is_single_date',
+        'centre_list_ready',
+        'undertaking'
+    ];
+
+    /**
+     * Get All Applications
+     */
+    public function getAllRequests()
+    {
+        return $this->db->table('application a')
+            ->select('
+                a.id,
+                a.app_no,
+                a.created_at,
+                a.current_status,
+                ANY_VALUE(d.exam_name) as exam_name,
+                MIN(d.exam_date) as exam_date,
+                ANY_VALUE(c.centre_name) as centre_name,
+                ANY_VALUE(c.state) as state,
+                ANY_VALUE(c.district) as district
+            ')
+            ->join('application_date_mapping d', 'd.app_id = a.id', 'left')
+            ->join('application_centre_mapping c', 'c.app_id = a.id', 'left')
+            ->where('a.isactive', 1)
+            ->groupBy('a.id')
+            ->orderBy('a.created_at', 'DESC')
+            ->get()
+            ->getResultArray();
+    }
+
+    /**
+     * Get Application By ID
+     */
+    public function getRequestById($id)
+    {
+        $application = $this->find($id);
+
+        if ($application) {
+            $db = \Config\Database::connect();
+            
+            $application['dates'] = $db->table('application_date_mapping')
+                ->where('app_id', $id)
+                ->get()
+                ->getResultArray();
+
+            $application['centres'] = $db->table('application_centre_mapping')
+                ->where('app_id', $id)
+                ->get()
+                ->getResultArray();
+        }
+
+        return $application;
+    }
+}

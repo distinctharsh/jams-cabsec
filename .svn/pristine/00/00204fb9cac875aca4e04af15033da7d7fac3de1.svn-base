@@ -1,0 +1,1722 @@
+<?php
+ob_start();
+
+// Get application data from controller
+$appData = $data['application_data'] ?? [];
+$statusId = $appData['status_id'] ?? 1;
+$csrfTokenName = $data['csrf_token_name'] ?? csrf_token();
+$csrfHash = $data['csrf_hash'] ?? csrf_hash();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details</title>
+</head>
+<body>
+
+<!-- Add CSRF token meta tag for AJAX requests -->
+<meta name="csrf-token-name" content="<?= $csrfTokenName ?>">
+<meta name="csrf-token-hash" content="<?= $csrfHash ?>">
+
+<div class="grid gap-6">
+    <div class="space-y-6 max-w-[1500px] mx-auto w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <!-- LEFT COLUMN -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- REQUEST DETAILS CARD -->
+                <div class="gov-card p-5 mt-5">
+                    <!-- HEADER -->
+                    <div class="flex items-center justify-between mb-6 gap-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                                <i class="fas fa-file-alt text-[#e58500] text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-[#1e4d7b]">Request Details</h2>
+                                <?php if (isset($status)): ?>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold
+                                        <?php 
+                                        $statusId = $status->id ?? 1;
+                                        if ($statusId == 3): ?>
+                                            bg-green-100 text-green-700
+                                        <?php elseif ($statusId == 9 || $statusId == 10 || $statusId == 11 || $statusId == 12): ?>
+                                            bg-emerald-100 text-emerald-700
+                                        <?php elseif ($statusId >= 13): ?>
+                                            bg-red-100 text-red-700
+                                        <?php else: ?>
+                                            bg-blue-100 text-[#1e4d7b]
+                                        <?php endif; ?>
+                                    ">
+                                        <?= esc($status->name ?? 'SUBMITTED') ?>
+                                    </span>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">Request ID: <?= esc($application->app_no ?? '#0045') ?></p>
+                    </div>
+
+                    <!-- TAB HEADER -->
+                    <div class="flex border-b border-slate-200 mb-6 gap-6">
+                        <button type="button" id="tab-btn-details" onclick="switchTab('details')" class="pb-3 text-sm font-bold text-[#1e4d7b] border-b-2 border-[#1e4d7b] flex items-center gap-2 transition">
+                            <i class="fas fa-info-circle"></i>Details
+                        </button>
+                        <button type="button" id="tab-btn-documents" onclick="switchTab('documents')" class="pb-3 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 flex items-center gap-2 transition">
+                            <i class="fas fa-folder-open"></i>
+                            Documents
+                        </button>
+                    </div>
+
+                    <!-- DETAILS TAB -->
+                    <div id="tab-content-details" class="space-y-4">
+                        <!-- APPLICATION DETAILS -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-[#e58500] text-sm"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#1e4d7b]">Application Details</h3>
+                                    <p class="text-[11px] text-slate-400">Basic application and reference information</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-1">Application Number</label>
+                                    <p class="text-sm font-semibold text-slate-800"><?= esc($application->app_no ?? 'JPMS/2026/001057') ?></p>
+                                </div>
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-1">Authorised Contact</label>
+                                    <p class="text-sm font-semibold text-slate-800"><?= esc($application->contact_person ?? 'Ananya Rao') ?></p>
+                                </div>
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-1">Status</label>
+                                    <p class="text-sm font-semibold text-slate-800">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold
+                                            <?php 
+                                            $statusId = $status->id ?? 1;
+                                            if ($statusId == 3): ?>
+                                                bg-green-100 text-green-700
+                                            <?php elseif ($statusId >= 9 && $statusId <= 12): ?>
+                                                bg-emerald-100 text-emerald-700
+                                            <?php elseif ($statusId >= 13): ?>
+                                                bg-red-100 text-red-700
+                                            <?php else: ?>
+                                                bg-blue-100 text-[#1e4d7b]
+                                            <?php endif; ?>
+                                        ">
+                                            <?= esc($status->name ?? 'SUBMITTED') ?>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-1">Submitted Date</label>
+                                    <p class="text-sm font-semibold text-slate-800"><?= date('d-m-Y H:i:s', strtotime($application->created_at ?? date('Y-m-d H:i:s'))) ?></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-6 border-slate-200">
+
+                        <!-- ORGANISATION DETAILS -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                                    <i class="fas fa-building text-[#e58500] text-sm"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#1e4d7b]">Organisation Details</h3>
+                                    <p class="text-[11px] text-slate-400">Registered organisation information</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-1">Organisation Name</label>
+                                    <p class="text-sm font-semibold text-slate-800"><?= esc($application->organisation ?? 'Global Education Services Pvt Ltd') ?></p>
+                                </div>
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-1">Organisation Type</label>
+                                    <p class="text-sm font-semibold text-slate-800"><?= esc($application->organisation_type ?? 'Private Limited') ?></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-6 border-slate-200">
+
+                        <!-- EXAMINATION DETAILS -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                                    <i class="fas fa-graduation-cap text-[#e58500] text-sm"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#1e4d7b]">Examination Details</h3>
+                                    <p class="text-[11px] text-slate-400">Examination schedule and centre information</p>
+                                </div>
+                            </div>
+
+                            <!-- CENTRE INFORMATION NOT AVAILABLE - Shows when centre_list_ready = 0 -->
+                            <?php if (isset($application->centre_list_ready) && $application->centre_list_ready == 0): ?>
+                            <div class="mt-4 p-4 border border-amber-200 bg-amber-50 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                                        <i class="fas fa-exclamation-triangle text-amber-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-amber-800">Centre Information Not Available</h4>
+                                        <p class="text-sm text-amber-700 mt-1 leading-relaxed">
+                                            Currently Centre Name, State, City, and Centre Address are not available right now. 
+                                        </p>
+                                        <div class="mt-2 flex items-center gap-2">
+                                            <div class="w-4 h-4 rounded border-2 border-amber-500 bg-amber-500 flex items-center justify-center">
+                                                <i class="fas fa-check text-white text-[8px]"></i>
+                                            </div>
+                                            <span class="text-xs text-amber-700">Declaration acknowledged</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            <br>
+                            <?php if (!empty($exam_details)): ?>
+                                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                    <table class="w-full text-sm">
+                                        <thead>
+                                            <tr class="bg-slate-50 border-b border-slate-200">
+                                                <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">S. No.</th>
+                                                <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">Exam Name</th>
+                                                <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">Exam Date</th>
+                                                <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">Centre Name</th>
+                                                <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">State/UT</th>
+                                                <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">City/District</th>
+                                                <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">Centre Address</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-100">
+                                            <?php $i = 1; foreach ($exam_details as $exam): ?>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="px-4 py-3 align-top text-slate-700 font-medium"><?= $i++ ?></td>
+                                                <td class="px-4 py-3 align-top text-slate-800 font-semibold"><?= esc($exam['exam_name'] ?? '—') ?></td>
+                                                <td class="px-4 py-3 align-top text-slate-700 whitespace-nowrap"><?= !empty($exam['exam_date']) ? date('d M Y', strtotime($exam['exam_date'])) : '—' ?></td>
+                                                <td class="px-4 py-3 align-top text-slate-700"><?= esc($exam['centre_name'] ?? '—') ?></td>
+                                                <td class="px-4 py-3 align-top text-slate-700">
+                                                    <?= esc(getMasterValue('state', $exam['state_name'] ?? '', 'state_name') ?: '-') ?>
+                                                </td>
+                                                <td class="px-4 py-3 align-top text-slate-700">
+                                                    <?= esc(getMasterValue('city', $exam['district_name'] ?? '', 'city_name') ?: '-') ?>
+                                                </td>
+                                                <td class="px-4 py-3 align-top text-slate-700 leading-relaxed"><?= esc($exam['centre_address'] ?? '—') ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php else: ?>
+                                <div class="text-center text-slate-500 py-4 border border-slate-200 rounded-lg">No examination details found</div>
+                            <?php endif; ?>
+                        </div>
+
+                        <hr class="my-6 border-slate-200">
+
+                        <!-- VENDOR DETAILS -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                                    <i class="fas fa-microchip text-[#e58500] text-sm"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#1e4d7b]">Vendor Details</h3>
+                                    <p class="text-[11px] text-slate-400">Vendors associated with this application</p>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table class="w-full min-w-[500px] text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200">
+                                            <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">S. No.</th>
+                                            <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">Vendor Name</th>
+                                            <th class="px-4 py-3 text-left text-[11px] font-bold text-slate-600">Jammer Model</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        <?php if (!empty($vendors)): ?>
+                                            <?php $i = 1; foreach ($vendors as $vendor): ?>
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="px-4 py-3 text-slate-700 font-medium"><?= $i++ ?></td>
+                                                <td class="px-4 py-3 text-slate-800 font-semibold"><?= esc($vendor['vendor_name'] ?? 'Vendor ' . $i) ?></td>
+                                                <td class="px-4 py-3 text-slate-700"><?= esc($vendor['jammer_model_name'] ?? '—') ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="3" class="px-4 py-3 text-center text-slate-500">No vendor details found</td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr class="my-6 border-slate-200">
+
+                        <!-- CONTACT DETAILS -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                                    <i class="fas fa-user-tie text-[#e58500] text-sm"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#1e4d7b]">Contact Details</h3>
+                                    <p class="text-[11px] text-slate-400">Authorised contact information</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-2">Contact Person</label>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center">
+                                            <i class="fas fa-user text-[#1e4d7b] text-[10px]"></i>
+                                        </div>
+                                        <p class="text-sm font-semibold text-slate-800"><?= esc($application->contact_person ?? 'Ananya Rao') ?></p>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-2">Email Address</label>
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <div class="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                                            <i class="fas fa-envelope text-[#1e4d7b] text-[10px]"></i>
+                                        </div>
+                                        <p class="text-sm font-semibold text-slate-800 truncate"><?= esc($application->email ?? 'ananya.rao@globaledu.in') ?></p>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50/70 border border-slate-200 rounded-lg px-4 py-3">
+                                    <label class="block text-[11px] font-medium text-slate-500 mb-2">Phone Number</label>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center">
+                                            <i class="fas fa-phone text-[#1e4d7b] text-[10px]"></i>
+                                        </div>
+                                        <p class="text-sm font-semibold text-slate-800"><?= esc($application->phone ?? '+91 98765 43210') ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DOCUMENTS TAB -->
+                    <div id="tab-content-documents" class="hidden space-y-4">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                                <i class="fas fa-folder-open text-[#e58500] text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-[#1e4d7b]">Application Documents</h3>
+                                <p class="text-[11px] text-slate-400">Documents submitted with this application</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <?php if (!empty($documents)): ?>
+                                <?php foreach ($documents as $doc): ?>
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-slate-50/70 border border-slate-200 rounded-lg">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-10 h-10 rounded-lg <?= $doc['document_type'] == 1 ? 'bg-emerald-50' : ($doc['document_type'] == 2 ? 'bg-red-50' : 'bg-amber-50') ?> flex items-center justify-center shrink-0">
+                                            <i class="fas <?= $doc['document_type'] == 1 ? 'fa-file-excel text-emerald-600' : ($doc['document_type'] == 2 ? 'fa-file-pdf text-red-500' : 'fa-file-signature text-amber-600') ?> text-lg"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-semibold text-slate-800 truncate"><?= esc($doc['document_name'] ?? 'Document') ?></h4>
+                                            <p class="text-xs text-slate-500 mt-0.5">
+                                                <?= $doc['document_type'] == 1 ? 'Excel Schedule Attachment' : ($doc['document_type'] == 2 ? 'Technical Specification' : 'Signed Application Copy') ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                <?php if (session()->get('user_id')): ?>
+                                    <?php
+                                        $docName = $doc['document_name'] ?? '';
+                                        $extension = strtolower(pathinfo($docName, PATHINFO_EXTENSION));
+
+                                        $isPdf = ($extension === 'pdf');
+                                    ?>
+                                    <div class="flex gap-2 shrink-0">
+                                        <?php if ($isPdf): ?>
+                                            <!-- Preview - PDF only -->
+                                            <a href="<?= base_url('view-document/' . $doc['id']) ?>"
+                                               target="_blank"
+                                               class="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg font-medium text-xs hover:bg-green-100 transition flex items-center gap-1">
+                                                <i class="fas fa-eye"></i>
+                                                Preview
+                                            </a>
+                                        <?php endif; ?>
+                                        <!-- Download - PDF / Excel / Other allowed files -->
+                                        <a href="<?= base_url('download-document/' . $doc['id']) ?>"
+                                           class="w-8 h-8 bg-blue-50 text-[#1e4d7b] rounded-lg hover:bg-blue-100 transition flex items-center justify-center"
+                                           title="Download">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="text-center text-slate-500 py-4">No documents uploaded yet</div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="space-y-4 lg:sticky lg:top-6">
+
+                <!-- SUBMISSION PROGRESS -->
+                <div class="gov-card p-5">
+                    <h3 class="text-base font-bold text-slate-800 mb-5">Submission progress</h3>
+
+                    <!-- STEPS -->
+                    <div class="space-y-5">
+                        <?php 
+                        $statusId = $status->id ?? 0;
+                        $step1Completed = $statusId >= 1;
+                        $step2Completed = $statusId >= 2;
+                        $step3Completed = $statusId >= 3;
+                        ?>
+                        
+                        <!-- STEP 1: Fill the application -->
+                        <div class="flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-full <?= $step1Completed ? 'bg-[#1e4d7b] text-white' : 'border-2 border-[#1e4d7b] text-[#1e4d7b]' ?> flex items-center justify-center text-xs font-bold shrink-0">
+                                <?= $step1Completed ? '<i class="fas fa-check text-[10px]"></i>' : '1' ?>
+                            </div>
+                            <div class="flex-1 pt-0.5">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-sm font-bold <?= $step1Completed ? 'text-slate-800' : 'text-slate-600' ?>">Fill the application</h4>
+                                    <?php if ($step1Completed): ?>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium bg-green-100 text-green-700">
+                                            <i class="fas fa-check-circle mr-1 text-[8px]"></i> Completed
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="text-xs <?= $step1Completed ? 'text-slate-500' : 'text-slate-400' ?> mt-0.5 leading-relaxed">Organisation, examination, vendor and declarations.</p>
+                            </div>
+                        </div>
+
+                        <!-- STEP 2: PDF generated -->
+                        <div class="flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-full <?= $step2Completed ? 'bg-[#1e4d7b] text-white' : 'border-2 border-[#1e4d7b] text-[#1e4d7b]' ?> flex items-center justify-center text-xs font-bold shrink-0">
+                                <?= $step2Completed ? '<i class="fas fa-check text-[10px]"></i>' : '2' ?>
+                            </div>
+                            <div class="flex-1 pt-0.5">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-sm font-bold <?= $step2Completed ? 'text-slate-800' : 'text-slate-600' ?>">PDF generated</h4>
+                                    <?php if ($step2Completed): ?>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium bg-green-100 text-green-700">
+                                            <i class="fas fa-check-circle mr-1 text-[8px]"></i> Completed
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="text-xs <?= $step2Completed ? 'text-slate-500' : 'text-slate-400' ?> mt-0.5 leading-relaxed">A government-format application PDF is generated on submit.</p>
+                            </div>
+                        </div>
+
+                        <!-- STEP 3: Sign the PDF -->
+                        <div class="flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-full <?= $step3Completed ? 'bg-[#1e4d7b] text-white' : 'border-2 border-[#1e4d7b] text-[#1e4d7b]' ?> flex items-center justify-center text-xs font-bold shrink-0">
+                                <?= $step3Completed ? '<i class="fas fa-check text-[10px]"></i>' : '3' ?>
+                            </div>
+                            <div class="flex-1 pt-0.5">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-sm font-bold <?= $step3Completed ? 'text-slate-800' : 'text-slate-600' ?>">Sign the PDF</h4>
+                                    <?php if ($step3Completed): ?>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium bg-green-100 text-green-700">
+                                            <i class="fas fa-check-circle mr-1 text-[8px]"></i> Completed
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="text-xs <?= $step3Completed ? 'text-slate-500' : 'text-slate-400' ?> mt-0.5 leading-relaxed">Download, get it signed by the authorised signatory.</p>
+                            </div>
+                        </div>
+
+                        <!-- STEP 4: Upload signed PDF -->
+                        <div class="flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-full <?= $step3Completed ? 'bg-[#1e4d7b] text-white' : 'border-2 border-[#1e4d7b] text-[#1e4d7b]' ?> flex items-center justify-center text-xs font-bold shrink-0">
+                                <?= $step3Completed ? '<i class="fas fa-check text-[10px]"></i>' : '4' ?>
+                            </div>
+                            <div class="flex-1 pt-0.5">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-sm font-bold <?= $step3Completed ? 'text-slate-800' : 'text-slate-600' ?>">Upload signed PDF</h4>
+                                    <?php if ($step3Completed): ?>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium bg-green-100 text-green-700">
+                                            <i class="fas fa-check-circle mr-1 text-[8px]"></i> Completed
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="text-xs <?= $step3Completed ? 'text-slate-500' : 'text-slate-400' ?> mt-0.5 leading-relaxed">Upload the signed file for Dealing Hand verification.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GENERATED APPLICATION PDF - Show only when status >= 2 -->
+                <?php if ($statusId >= 2): ?>
+                <div class="gov-card p-5">
+                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="far fa-file-alt text-[#1e4d7b]"></i>
+                        Generated application PDF
+                    </h3>
+
+                    <!-- APPLICATION INFORMATION -->
+                    <div class="border border-slate-200 bg-slate-50 rounded-lg p-3 mb-3">
+                        <p id="applicationNumber" class="text-xs font-bold text-slate-800"><?= esc($application->app_no ?? 'JPMS/2026/001057') ?></p>
+                        <p id="applicationOrganisation" class="text-xs text-slate-500 mt-1"><?= esc($application->organisation ?? '—') ?></p>
+                        <div class="mt-2">
+                            <span id="applicationStatus" class="inline-flex items-center px-2.5 py-1 rounded-md <?= ($statusId >= 3) ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-[#1e4d7b]' ?> text-[10px] font-bold">
+                                <?= ($statusId >= 3) ? 'Signed PDF Uploaded' : 'PDF Generated' ?>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Upload Signed PDF -->
+                    <?php if ($statusId < 3): ?>
+                    <!-- Download Button -->
+                    <button type="button" onclick="downloadApplicationPreview(<?= $application->id ?>)" class="w-full px-4 py-2.5 bg-[#1e4d7b] hover:bg-[#163a5d] text-white rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                    <button type="button" onclick="document.getElementById('signedPdfInput').click()" class="w-full mt-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2">
+                        <i class="fas fa-pen"></i>
+                        Upload signed PDF
+                    </button>
+                    <?php else: ?>
+                    <button type="button" onclick="document.getElementById('signedPdfInput').click()" class="w-full mt-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2">
+                        <i class="fas fa-upload"></i>
+                        Re-Upload Signed PDF
+                    </button>
+                    <?php endif; ?>
+
+                    <input type="file" id="signedPdfInput" name="signed_pdf" accept=".pdf,application/pdf" class="hidden" onchange="handleSignedPdf(this, <?= $application->id ?>)">
+
+                    <!-- SELECTED SIGNED PDF -->
+                    <div id="signedPdfPreview" class="<?= ($signed_pdf) ? '' : 'hidden' ?> mt-3">
+                        <div class="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0">
+                                <i class="fas fa-file-pdf text-red-500"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p id="signedPdfFileName" class="text-xs font-semibold text-slate-700 truncate"><?= $signed_pdf ? esc($signed_pdf->document_name) : '' ?></p>
+                                <p id="signedPdfFileSize" class="text-[10px] text-slate-500"></p>
+                            </div>
+                            <button type="button" onclick="removeSignedPdf(event)" class="w-7 h-7 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition">
+                                <i class="fas fa-times text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- APPLICATION PDF PREVIEW MODAL -->
+<div id="applicationPdfModal" class="fixed inset-0 z-[99999] hidden">
+    <!-- BACKDROP -->
+    <div class="absolute inset-0 bg-slate-900/75 backdrop-blur-sm" onclick="closeApplicationPdfPreview()"></div>
+
+    <!-- MODAL -->
+    <div class="relative z-10 w-[96%] max-w-6xl h-[94vh] mx-auto mt-[3vh] bg-slate-100 rounded-xl shadow-2xl overflow-hidden flex flex-col">
+
+        <!-- DOCUMENT PREVIEW AREA -->
+        <div id="applicationPreviewContent" class="flex-1 overflow-y-auto bg-slate-200 p-6">
+            <!-- PDF content will be loaded here via JavaScript -->
+            <div id="pdfContentLoader" class="flex items-center justify-center h-full">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin text-4xl text-[#1e4d7b]"></i>
+                    <p class="mt-4 text-slate-600">Loading PDF preview...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION FOOTER -->
+        <div class="flex items-center justify-end gap-2 px-5 py-3 bg-white border-t border-slate-200 shrink-0">
+            <button type="button" onclick="closeApplicationPdfPreview()" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-2 transition">
+                <i class="fas fa-times"></i> Close
+            </button>
+            <button type="button" onclick="printApplicationPreview()" class="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-2 transition">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <button type="button" onclick="downloadApplicationPreview(<?= $application->id ?>)" class="px-4 py-2 bg-[#1e4d7b] hover:bg-[#163a5d] text-white rounded-lg text-xs font-semibold flex items-center gap-2 transition">
+                <i class="fas fa-download"></i> Download
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Hidden data for JavaScript -->
+<script>
+    var baseUrl = "<?= base_url() ?>";
+    var appData = <?= json_encode($appData) ?>;
+    var appId = <?= $application->id ?? 0 ?>;
+    var csrfTokenName = "<?= $csrfTokenName ?>";
+    var csrfHash = "<?= $csrfHash ?>";
+</script>
+
+<script>
+/* =========================================================
+   GENERATE DECLARATION ACKNOWLEDGED PAGE HTML
+   ========================================================= */
+function generateDeclarationPageHTML(app) {
+    const createdDate = app.created_at ? new Date(app.created_at) : new Date();
+    const formattedDate = createdDate.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
+
+    let html = `
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+        font-family: 'Times New Roman', Arial, Helvetica, sans-serif;
+        background: #ffffff;
+        color: #0f172a;
+        padding: 20px;
+    }
+    @page { 
+        size: A4; 
+        margin: 10mm;
+        @bottom-center {
+            content: "Page " counter(page);
+            font-size: 9px;
+            color: #94a3b8;
+        }
+    }
+    @media print { body { padding: 0; } }
+    
+    .document {
+        width: 100%;
+        max-width: 210mm;
+        margin: 0 auto;
+        background: #ffffff;
+    }
+    
+    .tricolor {
+        height: 5px;
+        width: 100%;
+        background: linear-gradient(to right, #FF9933 0%, #FF9933 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%, #138808 100%);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .header { padding: 15px 28px 10px; }
+    .gov-header { text-align: center; }
+    .emblem {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 5px;
+    }
+    .gov-text {
+        font-size: 11px;
+        letter-spacing: 4px;
+        font-weight: 700;
+        color: #000000;
+        text-transform: uppercase;
+    }
+    .divider-main { margin-top: 12px; border-top: 2.5px solid #1e4d7b; }
+    .divider-sub { margin-top: 3px; border-top: 1px solid #cbd5e1; }
+    
+    .meta-wrapper { padding: 0 28px; }
+    .meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    .meta-right { text-align: right; }
+    .meta strong { font-weight: 700; }
+    
+    .document-title { padding: 0 28px; }
+    .title-box { text-align: center; margin-bottom: 18px; }
+    .title {
+        display: inline-block;
+        font-family: 'Times New Roman', Georgia, serif;
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2.5px solid #1e293b;
+        padding-bottom: 5px;
+        color: #1e293b;
+    }
+    
+    .content { padding: 0 28px; }
+    
+    .declaration-content {
+        font-size: 13px;
+        line-height: 2.2;
+        text-align: justify;
+        color: #1e293b;
+        padding: 20px 10px;
+    }
+    
+    .declaration-content .salutation {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    
+    .declaration-content .body-text {
+        margin: 15px 0;
+        padding-left: 20px;
+    }
+    
+    .signature-area {
+        margin-top: 50px;
+        padding: 0 10px;
+    }
+    
+    .signature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-top: 30px;
+    }
+    
+    .place-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+    .place-line {
+        margin-top: 35px;
+        width: 160px;
+        border-top: 1px solid #cbd5e1;
+    }
+    .signature { text-align: right; }
+    .signature-space { height: 45px; }
+    .signature-line {
+        display: inline-block;
+        min-width: 200px;
+        border-top: 1.5px solid #94a3b8;
+        padding-top: 8px;
+    }
+    .signatory {
+        font-size: 11px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .designation {
+        font-size: 9.5px;
+        color: #64748b;
+        margin-top: 4px;
+    }
+    .signature-date {
+        font-size: 10px;
+        color: #475569;
+        margin-top: 8px;
+    }
+    
+    .page-footer {
+        text-align: center;
+        font-size: 9px;
+        color: #94a3b8;
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .acknowledgement-badge {
+        display: inline-block;
+        background: #fef3c7;
+        border: 2px solid #f59e0b;
+        color: #92400e;
+        padding: 8px 20px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 700;
+        margin: 10px 0 20px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    @media print {
+        .document { max-width: 100%; }
+        .tricolor {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .acknowledgement-badge {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
+
+<div class="document">
+    <!-- TRICOLOR LINE -->
+    <div class="tricolor"></div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="gov-header">
+            <img 
+                src="${baseUrl}assets/image/Emblem_of_India.svg.webp"
+                class="emblem"
+                alt="Government of India Emblem"
+                onerror="this.style.display='none'"
+            >
+            <div class="gov-text">Government of India</div>
+        </div>
+        <div class="divider-main"></div>
+        <div class="divider-sub"></div>
+    </div>
+
+    <!-- META -->
+    <div class="meta-wrapper">
+        <div class="meta">
+            <div>
+                <strong>F.No.:</strong> ${escapeHtml(app.app_no || '11/37/2026-JAM')}
+            </div>
+            <div class="meta-right">
+                <strong>Dated:</strong> ${escapeHtml(formattedDate)}
+            </div>
+        </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="document-title">
+        <div class="title-box">
+            <div class="title">Declaration Acknowledged</div>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        <div class="declaration-content">
+            <div style="text-align:center;margin-bottom:15px;">
+                <span class="acknowledgement-badge">
+                    <i>⚠️ Centre Details Pending</i>
+                </span>
+            </div>
+            
+            <p class="salutation">Dear Sir,</p>
+            
+            <p class="body-text" style="margin-top:10px;">
+                I hereby acknowledge that the Centre details are currently pending and shall be provided separately once they are finalized and available.
+            </p>
+            
+            <p class="body-text" style="margin-top:15px;">
+                I further confirm that the pending Centre details will be submitted at the earliest for necessary processing.
+            </p>
+        </div>
+
+        <!-- SIGNATURE SECTION -->
+        <div class="signature-area">
+            <div class="signature-grid">
+                <div>
+                    <div class="place-label">Place:</div>
+                    <div class="place-line" style="margin-top:35px;"></div>
+                    <div style="margin-top:8px;font-size:10px;color:#64748b;">
+                        <span style="font-weight:600;color:#1e293b;">_________________</span>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <div class="place-label" style="font-size:10px;">Date:</div>
+                        <div style="margin-top:5px;width:120px;border-bottom:1px solid #cbd5e1;padding-bottom:3px;font-size:10px;color:#1e293b;">
+                            ${escapeHtml(formattedDate)}
+                        </div>
+                    </div>
+                </div>
+                <div class="signature">
+                    <div class="signature-space"></div>
+                    <div class="signature-line">
+                        <div class="signatory">Authorised Signatory</div>
+                        <div class="designation" style="margin-top:3px;">Name: _________________</div>
+                        <div class="designation">Designation: _________________</div>
+                        <div class="designation">(Seal / Stamp of Organisation)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top:20px;text-align:center;font-size:9.5px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:12px;">
+                <span>This declaration is generated through the online portal. Verifiable with the application number.</span>
+            </div>
+        </div>
+        
+        <div class="page-footer">Page 3</div>
+    </div>
+</div>
+    `;
+
+    return html;
+}
+
+/* =========================================================
+   GENERATE APPLICATION PDF HTML - COMPLETE WITH FULL CSS
+   ========================================================= */
+function generateApplicationPdfHTML(data) {
+    const app = data.application || {};
+    const examDetails = data.exam_details || [];
+    const vendors = data.vendors || [];
+    const centreListReady = app.centre_list_ready || 0;
+    
+    // Format date
+    const createdDate = app.created_at ? new Date(app.created_at) : new Date();
+    const formattedDate = createdDate.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
+
+    // Generate exam rows with centre details
+    let examRows = '';
+    if (examDetails.length > 0) {
+        examDetails.forEach((exam, index) => {
+            // Check if centre details are available
+            const hasCentreDetails = (exam.centre_name && exam.centre_name !== '—' && exam.centre_name !== '') || 
+                                    (exam.centre_address && exam.centre_address !== '—' && exam.centre_address !== '');
+            
+            if (centreListReady == 1 && hasCentreDetails) {
+                // Full details with centre information
+                examRows += `
+                    <tr>
+                        <td class="center" style="width:5%;">${index + 1}</td>
+                        <td class="left" style="width:18%;font-weight:600;">${escapeHtml(exam.exam_name || '—')}</td>
+                        <td class="center" style="width:12%;">${escapeHtml(exam.exam_date || '—')}</td>
+                        <td class="left" style="width:30%;">${escapeHtml(exam.centre_address || '—')}</td>
+                        <td class="center" style="width:15%;">${escapeHtml(exam.centre_name || '—')}</td>
+                        <td class="center" style="width:10%;">${escapeHtml(exam.state_name || '—')}</td>
+                        <td class="center" style="width:10%;">${escapeHtml(exam.district_name || '—')}</td>
+                    </tr>
+                `;
+            } else {
+                // Minimal details without centre info
+                examRows += `
+                    <tr>
+                        <td class="center" style="width:7%;">${index + 1}</td>
+                        <td class="left" style="width:25%;font-weight:600;">${escapeHtml(exam.exam_name || '—')}</td>
+                        <td class="center" style="width:18%;">${escapeHtml(exam.exam_date || '—')}</td>
+                        <td class="center" style="width:50%;" colspan="4">
+                            <span style="color:#b45309;font-weight:600;">
+                                <i>Centre details not available at the time of submission</i>
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+    } else {
+        examRows = `
+            <tr>
+                <td colspan="7" class="center" style="color:#94a3b8;padding:15px;">No examination details found</td>
+            </tr>
+        `;
+    }
+
+    // Generate vendor rows
+    let vendorRows = '';
+    if (vendors.length > 0) {
+        vendors.forEach((vendor, index) => {
+            vendorRows += `
+                <tr>
+                    <td class="center" style="width:8%;">${index + 1}</td>
+                    <td style="width:42%;font-weight:600;">${escapeHtml(vendor.vendor_name || '—')}</td>
+                    <td style="width:50%;">${escapeHtml(vendor.jammer_model_name || '—')}</td>
+                </tr>
+            `;
+        });
+    } else {
+        vendorRows = `
+            <tr>
+                <td colspan="3" class="center" style="color:#94a3b8;padding:15px;">No vendor details found</td>
+            </tr>
+        `;
+    }
+
+    // Generate exam header columns based on centre availability
+    let examHeaders = '';
+    if (centreListReady == 1) {
+        examHeaders = `
+            <th class="center" style="width:5%;">S.No.</th>
+            <th class="left" style="width:18%;">Examination Name</th>
+            <th class="center" style="width:12%;">Examination Date</th>
+            <th class="left" style="width:30%;">Examination Address</th>
+            <th class="center" style="width:15%;">Centre Name</th>
+            <th class="center" style="width:10%;">State</th>
+            <th class="center" style="width:10%;">City/District</th>
+        `;
+    } else {
+        examHeaders = `
+            <th class="center" style="width:7%;">S.No.</th>
+            <th class="left" style="width:25%;">Examination Name</th>
+            <th class="center" style="width:18%;">Examination Date</th>
+            <th class="center" style="width:50%;" colspan="4">Centre Details</th>
+        `;
+    }
+
+    // Build the complete PDF HTML - Main content
+    let html = `
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+        font-family: 'Times New Roman', Arial, Helvetica, sans-serif;
+        background: #ffffff;
+        color: #0f172a;
+        padding: 20px;
+    }
+    @page { 
+        size: A4; 
+        margin: 10mm;
+        @bottom-center {
+            content: "Page " counter(page);
+            font-size: 9px;
+            color: #94a3b8;
+        }
+    }
+    @media print { body { padding: 0; } }
+    
+    .document {
+        width: 100%;
+        max-width: 210mm;
+        margin: 0 auto;
+        background: #ffffff;
+    }
+    
+    .tricolor {
+        height: 5px;
+        width: 100%;
+        background: linear-gradient(to right, #FF9933 0%, #FF9933 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%, #138808 100%);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .header { padding: 15px 28px 10px; }
+    .gov-header { text-align: center; }
+    .emblem {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 5px;
+    }
+    .gov-text {
+        font-size: 11px;
+        letter-spacing: 4px;
+        font-weight: 700;
+        color: #000000;
+        text-transform: uppercase;
+    }
+    .divider-main { margin-top: 12px; border-top: 2.5px solid #1e4d7b; }
+    .divider-sub { margin-top: 3px; border-top: 1px solid #cbd5e1; }
+    
+    .meta-wrapper { padding: 0 28px; }
+    .meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    .meta-right { text-align: right; }
+    .meta strong { font-weight: 700; }
+    
+    .document-title { padding: 0 28px; }
+    .title-box { text-align: center; margin-bottom: 18px; }
+    .title {
+        display: inline-block;
+        font-family: 'Times New Roman', Georgia, serif;
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2.5px solid #1e293b;
+        padding-bottom: 5px;
+        color: #1e293b;
+    }
+    
+    .content { padding: 0 28px; }
+    .intro {
+        font-size: 12px;
+        line-height: 1.8;
+        text-align: justify;
+        margin: 0 0 18px;
+        color: #1e293b;
+    }
+    
+    .section {
+        margin-bottom: 22px;
+        page-break-inside: avoid;
+    }
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 2px solid #1e4d7b;
+        padding-bottom: 6px;
+        margin-bottom: 12px;
+        page-break-after: avoid;
+    }
+    .section-number {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        border-radius: 4px;
+        background: #1e4d7b;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e4d7b;
+        text-transform: uppercase;
+        margin: 0;
+        letter-spacing: 0.5px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10.5px;
+        table-layout: fixed;
+    }
+    thead { display: table-header-group; }
+    th {
+        background: #1e4d7b;
+        color: #ffffff;
+        border: 1px solid #163a5d;
+        padding: 7px 6px;
+        font-weight: 700;
+        vertical-align: middle;
+        font-size: 10px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    td {
+        border: 1px solid #cbd5e1;
+        padding: 7px 8px;
+        vertical-align: top;
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+        font-size: 10.5px;
+    }
+    .label-cell {
+        width: 30%;
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 700;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .value-cell {
+        color: #111827;
+        font-weight: 600;
+    }
+    .center { text-align: center; }
+    .left { text-align: left; }
+    
+    .declaration {
+        font-size: 11px;
+        line-height: 1.8;
+        text-align: justify;
+        margin: 0;
+        color: #1e293b;
+    }
+    .declaration + .declaration { margin-top: 8px; }
+    
+    .declaration-signature-area {
+        margin-top: 30px;
+        padding-top: 10px;
+        border-top: 1px dashed #94a3b8;
+    }
+    
+    .signature-area { padding: 0 28px 25px; }
+    .signature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-top: 30px;
+    }
+    .place-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+    .place-line {
+        margin-top: 35px;
+        width: 160px;
+        border-top: 1px solid #cbd5e1;
+    }
+    .signature { text-align: right; }
+    .signature-space { height: 45px; }
+    .signature-line {
+        display: inline-block;
+        min-width: 200px;
+        border-top: 1.5px solid #94a3b8;
+        padding-top: 8px;
+    }
+    .signatory {
+        font-size: 11px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .designation {
+        font-size: 9.5px;
+        color: #64748b;
+        margin-top: 4px;
+    }
+    .signature-date {
+        font-size: 10px;
+        color: #475569;
+        margin-top: 8px;
+    }
+    
+    .page-footer {
+        text-align: center;
+        font-size: 9px;
+        color: #94a3b8;
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    /* Centre not available notice */
+    .centre-notice {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-left: 4px solid #f59e0b;
+        padding: 12px 16px;
+        margin: 10px 0;
+        border-radius: 4px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .centre-notice strong {
+        color: #92400e;
+        font-weight: 700;
+    }
+    .centre-notice .acknowledge {
+        display: inline-block;
+        margin-top: 6px;
+        font-size: 10.5px;
+        color: #78350f;
+        font-weight: 600;
+    }
+    
+    @media print {
+        .document { max-width: 100%; }
+        .section { page-break-inside: avoid; }
+        .section-heading { page-break-after: avoid; }
+        table { page-break-inside: auto; }
+        tr { page-break-inside: avoid; page-break-after: auto; }
+        .tricolor, th, .section-number {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .centre-notice {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
+
+<div class="document">
+    <!-- TRICOLOR LINE -->
+    <div class="tricolor"></div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="gov-header">
+            <img 
+                src="${baseUrl}assets/image/Emblem_of_India.svg.webp"
+                class="emblem"
+                alt="Government of India Emblem"
+                onerror="this.style.display='none'"
+            >
+            <div class="gov-text">Government of India</div>
+        </div>
+        <div class="divider-main"></div>
+        <div class="divider-sub"></div>
+    </div>
+
+    <!-- META -->
+    <div class="meta-wrapper">
+        <div class="meta">
+            <div>
+                <strong>F.No.:</strong> ${escapeHtml(app.app_no || '11/37/2026-JAM')}
+            </div>
+            <div class="meta-right">
+                <strong>Dated:</strong> ${escapeHtml(formattedDate)}
+            </div>
+        </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="document-title">
+        <div class="title-box">
+            <div class="title">Application for Jammer Deployment Permission</div>
+        </div>
+    </div>
+
+    <!-- CONTENT - PAGE 1 -->
+    <div class="content">
+        <!-- INTRO -->
+        <p class="intro">
+            This application is submitted by the following organisation for seeking permission 
+            for deployment of jammers during the examination(s) mentioned below.
+        </p>
+
+        <!-- SECTION 1: APPLICANT / ORGANISATION DETAILS -->
+        <div class="section">
+            <div class="section-heading">
+                <div class="section-number">1</div>
+                <div class="section-title">Applicant / Organisation Details</div>
+            </div>
+
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="label-cell">Application Number</td>
+                        <td class="value-cell">${escapeHtml(app.app_no || 'JPMS/2026/001057')}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Name of Organisation</td>
+                        <td class="value-cell">${escapeHtml(app.organisation || '—')}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Type of Organisation</td>
+                        <td class="value-cell">${escapeHtml(app.organisation_type || '—')}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Contact Person</td>
+                        <td class="value-cell">${escapeHtml(app.contact_person || '—')}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Email</td>
+                        <td class="value-cell">${escapeHtml(app.email || '—')}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Phone</td>
+                        <td class="value-cell">${escapeHtml(app.phone || '—')}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SECTION 2: EXAMINATION DETAILS -->
+        <div class="section">
+            <div class="section-heading">
+                <div class="section-number">2</div>
+                <div class="section-title">Examination Details</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        ${examHeaders}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${examRows}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SECTION 3: VENDOR DETAILS -->
+        <div class="section">
+            <div class="section-heading">
+                <div class="section-number">3</div>
+                <div class="section-title">Vendor Details</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th class="center" style="width:8%;">S.No.</th>
+                        <th class="left" style="width:42%;">Vendor Name</th>
+                        <th class="left" style="width:50%;">Jammer Model</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${vendorRows}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PAGE 2: DECLARATION WITH SIGNATURE -->
+    <div style="page-break-before:always;padding:0 28px;padding-top:20px;">
+        
+        <!-- SECTION 4: DECLARATION -->
+        <div class="section" style="margin-top:10px;">
+            <div class="section-heading">
+                <div class="section-number">4</div>
+                <div class="section-title">Declaration &amp; Undertaking</div>
+            </div>
+
+            <p class="declaration">
+                <strong>I/We hereby declare and undertake that:</strong>
+            </p>
+            
+            <p class="declaration" style="padding-left:20px;margin-top:6px;">
+                1. The information furnished in this application is true, complete and correct to the best of our knowledge and belief.
+            </p>
+            <p class="declaration" style="padding-left:20px;margin-top:3px;">
+                2. The organisation shall comply with all applicable laws, rules, regulations, instructions, guidelines and conditions relating to the deployment, operation and safe custody of jammers during the examination(s).
+            </p>
+            <p class="declaration" style="padding-left:20px;margin-top:3px;">
+                3. The equipment shall be deployed strictly for the approved purpose and only at the approved examination centre(s) mentioned in this application.
+            </p>
+            <p class="declaration" style="padding-left:20px;margin-top:3px;">
+                4. The authorised representative shall ensure that the jammers are operated only during the examination hours and are promptly deactivated after the examination.
+            </p>
+            <p class="declaration" style="padding-left:20px;margin-top:3px;">
+                5. The organisation shall maintain a proper log of deployment and shall make it available for inspection by the competent authority whenever required.
+            </p>
+            <p class="declaration" style="padding-left:20px;margin-top:3px;">
+                6. The organisation shall indemnify and hold harmless the Government of India against any loss, damage, claim or liability arising out of the deployment and use of the jammers.
+            </p>
+
+            <p class="declaration" style="margin-top:10px;">
+                <strong>We understand that any false statement or suppression of material fact may render this application liable for rejection and may attract penal action under the relevant laws.</strong>
+            </p>
+        </div>
+
+        <!-- SIGNATURE SECTION -->
+        <div class="declaration-signature-area">
+            <div class="signature-grid">
+                <div>
+                    <div class="place-label">Place:</div>
+                    <div class="place-line" style="margin-top:35px;"></div>
+                    <div style="margin-top:8px;font-size:10px;color:#64748b;">
+                        <span id="pdf-place-value" style="font-weight:600;color:#1e293b;">_________________</span>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <div class="place-label" style="font-size:10px;">Date:</div>
+                        <div style="margin-top:5px;width:120px;border-bottom:1px solid #cbd5e1;padding-bottom:3px;font-size:10px;color:#1e293b;">
+                            ${escapeHtml(formattedDate)}
+                        </div>
+                    </div>
+                </div>
+                <div class="signature">
+                    <div class="signature-space"></div>
+                    <div class="signature-line">
+                        <div class="signatory">Authorised Signatory</div>
+                        <div class="designation" style="margin-top:3px;">Name: _________________</div>
+                        <div class="designation">Designation: _________________</div>
+                        <div class="designation">(Seal / Stamp of Organisation)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top:20px;text-align:center;font-size:9.5px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:12px;">
+                <span>This application is generated through the online portal. Verifiable with the application number.</span>
+            </div>
+        </div>
+        
+        <div class="page-footer">Page 2</div>
+    </div>
+</div>
+    `;
+
+    // If centre_list_ready == 0, add the Declaration Acknowledged page
+    if (centreListReady == 0) {
+        html += `
+    <!-- PAGE 3: DECLARATION ACKNOWLEDGED -->
+    <div style="page-break-before:always;">
+        ${generateDeclarationPageHTML(app)}
+    </div>
+        `;
+    }
+
+    return html;
+}
+
+/* =========================================================
+   PREVIEW APPLICATION PDF
+   ========================================================= */
+function previewApplicationPdf(appId) {
+    const modal = document.getElementById('applicationPdfModal');
+
+    if (!modal) {
+        console.error('Application PDF modal not found.');
+        return;
+    }
+
+    document.getElementById('pdfContentLoader').innerHTML = `
+        <div class="text-center py-20">
+            <i class="fas fa-spinner fa-spin text-4xl text-[#1e4d7b]"></i>
+            <p class="mt-4 text-slate-600">Loading PDF preview...</p>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+
+    $.ajax({
+        url: baseUrl + '/preview-application-pdf/' + appId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            const pdfHTML = generateApplicationPdfHTML(response);
+            document.getElementById('pdfContentLoader').innerHTML = pdfHTML;
+        },
+        error: function(xhr) {
+            let errorMsg = 'Failed to load PDF preview';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMsg = xhr.responseJSON.error;
+            }
+            document.getElementById('pdfContentLoader').innerHTML = `
+                <div class="text-center text-red-500 py-20">
+                    <i class="fas fa-exclamation-circle text-4xl"></i>
+                    <p class="mt-4">${escapeHtml(errorMsg)}</p>
+                </div>
+            `;
+        }
+    });
+}
+
+/* =========================================================
+   DOWNLOAD APPLICATION AS PDF
+   ========================================================= */
+function downloadApplicationPreview(appId) {
+    $.ajax({
+        url: baseUrl + '/preview-application-pdf/' + appId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            const pdfHTML = generateApplicationPdfHTML(response);
+            
+            const printWindow = window.open('', '_blank', 'width=1000,height=800');
+            if (!printWindow) {
+                alert('Please allow pop-ups to download the PDF.');
+                return;
+            }
+
+            printWindow.document.write('<!DOCTYPE html>\n<html>\n<head>\n<meta charset="UTF-8">\n<title>Application PDF</title>\n</head>\n<body>\n' + pdfHTML + '\n</body>\n</html>');
+            printWindow.document.close();
+
+            setTimeout(function() {
+                printWindow.focus();
+                printWindow.print();
+                setTimeout(function() { printWindow.close(); }, 1000);
+            }, 500);
+        },
+        error: function(xhr) {
+            let errorMsg = 'Failed to load application data';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMsg = xhr.responseJSON.error;
+            }
+            alert('Error: ' + errorMsg);
+        }
+    });
+}
+
+/* =========================================================
+   PRINT APPLICATION PREVIEW
+   ========================================================= */
+function printApplicationPreview() {
+    const content = document.getElementById('pdfContentLoader');
+    if (!content) {
+        console.error('Application preview content not found.');
+        return;
+    }
+
+    const docElement = content.querySelector('.document');
+    if (!docElement) {
+        alert('PDF content not found. Please try again.');
+        return;
+    }
+
+    const printWindow = window.open('', '_blank', 'width=1000,height=800');
+    if (!printWindow) {
+        alert('Please allow pop-ups to print the application.');
+        return;
+    }
+
+    const htmlContent = docElement.outerHTML;
+    
+    printWindow.document.write('<!DOCTYPE html>\n<html>\n<head>\n<meta charset="UTF-8">\n<title>Application Preview</title>\n</head>\n<body>\n' + htmlContent + '\n</body>\n</html>');
+    printWindow.document.close();
+
+    setTimeout(function() {
+        printWindow.focus();
+        printWindow.print();
+        setTimeout(function() { printWindow.close(); }, 500);
+    }, 700);
+}
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+/* =========================================================
+   CLOSE APPLICATION PREVIEW MODAL
+   ========================================================= */
+function closeApplicationPdfPreview() {
+    const modal = document.getElementById('applicationPdfModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+}
+
+/* =========================================================
+   SWITCH TAB
+   ========================================================= */
+function switchTab(tab) {
+    const detailsContent = document.getElementById('tab-content-details');
+    const documentsContent = document.getElementById('tab-content-documents');
+    const detailsButton = document.getElementById('tab-btn-details');
+    const documentsButton = document.getElementById('tab-btn-documents');
+
+    if (tab === 'details') {
+        detailsContent.classList.remove('hidden');
+        documentsContent.classList.add('hidden');
+        detailsButton.classList.remove('font-medium', 'text-slate-500', 'border-transparent');
+        detailsButton.classList.add('font-bold', 'text-[#1e4d7b]', 'border-[#1e4d7b]');
+        documentsButton.classList.remove('font-bold', 'text-[#1e4d7b]', 'border-[#1e4d7b]');
+        documentsButton.classList.add('font-medium', 'text-slate-500', 'border-transparent');
+    } else if (tab === 'documents') {
+        detailsContent.classList.add('hidden');
+        documentsContent.classList.remove('hidden');
+        documentsButton.classList.remove('font-medium', 'text-slate-500', 'border-transparent');
+        documentsButton.classList.add('font-bold', 'text-[#1e4d7b]', 'border-[#1e4d7b]');
+        detailsButton.classList.remove('font-bold', 'text-[#1e4d7b]', 'border-[#1e4d7b]');
+        detailsButton.classList.add('font-medium', 'text-slate-500', 'border-transparent');
+    }
+}
+
+/* =========================================================
+   SIGNED PDF HANDLING - WITH CSRF PROTECTION
+   ========================================================= */
+function handleSignedPdf(input, appId) {
+    const file = input.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (!isPdf) {
+        alert('Please select a PDF file only.');
+        input.value = '';
+        return;
+    }
+
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert('PDF size must not exceed 10 MB.');
+        input.value = '';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('signed_pdf', file);
+    formData.append('app_id', appId);
+    // Include CSRF token
+    formData.append(csrfTokenName, csrfHash);
+
+    const preview = document.getElementById('signedPdfPreview');
+    const fileName = document.getElementById('signedPdfFileName');
+    const fileSize = document.getElementById('signedPdfFileSize');
+
+    if (fileName) fileName.textContent = 'Uploading...';
+    if (fileSize) fileSize.textContent = 'Please wait';
+    if (preview) preview.classList.remove('hidden');
+
+    $.ajax({
+        url: baseUrl + '/upload-signed-pdf',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        cache: false,
+        headers: {
+            'X-CSRF-TOKEN': csrfHash
+        },
+        success: function(response) {
+            if (response.success) {
+                if (fileName) fileName.textContent = file.name;
+                if (fileSize) fileSize.textContent = formatFileSize(file.size);
+                if (preview) preview.classList.remove('hidden');
+                location.reload();
+            } else {
+                alert(response.message || 'Upload failed. Please try again.');
+                if (preview) preview.classList.add('hidden');
+            }
+        },
+        error: function(xhr) {
+            if (xhr.status === 403) {
+                alert('Session expired or CSRF token invalid. Please refresh the page and try again.');
+                location.reload();
+            } else {
+                alert('Upload failed. Please try again.');
+            }
+            if (preview) preview.classList.add('hidden');
+        }
+    });
+}
+
+function formatFileSize(bytes) {
+    if (!bytes) return '0 Bytes';
+    const units = ['Bytes', 'KB', 'MB', 'GB'];
+    const index = Math.floor(Math.log(bytes) / Math.log(1024));
+    return parseFloat((bytes / Math.pow(1024, index)).toFixed(2)) + ' ' + units[index];
+}
+
+function removeSignedPdf(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const input = document.getElementById('signedPdfInput');
+    const preview = document.getElementById('signedPdfPreview');
+    const fileName = document.getElementById('signedPdfFileName');
+    const fileSize = document.getElementById('signedPdfFileSize');
+
+    if (input) input.value = '';
+    if (preview) preview.classList.add('hidden');
+    if (fileName) fileName.textContent = '';
+    if (fileSize) fileSize.textContent = '';
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('applicationPdfModal');
+        if (modal && !modal.classList.contains('hidden')) {
+            closeApplicationPdfPreview();
+        }
+    }
+});
+</script>
+
+<?php
+$page_content = ob_get_clean();
+include dirname(__DIR__) . '/dashboard.php';
+?>
+</body>
+</html>

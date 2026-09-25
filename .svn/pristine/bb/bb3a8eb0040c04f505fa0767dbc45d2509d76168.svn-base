@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class RequestModel extends Model
+{
+    protected $table = 'application';
+    protected $primaryKey = 'id';
+
+    protected $useAutoIncrement = true;
+    protected $returnType = 'array';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'application_no',
+        'organisation',
+        'organisation_type',
+        'letter_number',
+        'contact_person',
+        'email',
+        'phone',
+        'undertaking',
+
+        'exam_name',
+        'exam_date',
+        'exam_address',
+
+        'vendor_name',
+
+        'status',
+        'created_by',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
+
+
+    /**
+     * Create Application
+     */
+    public function createRequest($data)
+    {
+        return $this->insert($data);
+    }
+
+
+    /**
+     * Get All Applications
+     */
+    public function getAllRequests()
+    {
+        return $this
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+    }
+
+
+    /**
+     * Get Application By ID
+     */
+    public function getRequestById($id)
+    {
+        return $this
+            ->where('id', $id)
+            ->first();
+    }
+
+
+    /**
+     * Update Application
+     */
+    public function updateRequest($id, $data)
+    {
+        return $this->update($id, $data);
+    }
+
+
+    /**
+     * Delete Application
+     */
+    public function deleteRequest($id)
+    {
+        return $this->delete($id);
+    }
+}
