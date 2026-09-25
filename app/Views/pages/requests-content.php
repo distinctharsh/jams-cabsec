@@ -1,0 +1,384 @@
+<?php
+ob_start();
+?>
+<link rel="stylesheet" href="<?= base_url('assets/css/select2.min.css') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/buttons.dataTables.min.css') ?>">
+
+<style>
+    .dt-buttons {
+        display: inline-flex !important;
+        gap: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .dt-button {
+        background-color: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #1e4d7b !important;
+        font-size: 0.8125rem !important;
+        font-weight: 600 !important;
+        padding: 0.4rem 0.85rem !important;
+        border-radius: 0.5rem !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    }
+    .dt-button:hover {
+        background-color: #1e4d7b !important;
+        color: #ffffff !important;
+        border-color: #1e4d7b !important;
+    }
+    .dataTables_length, .dataTables_filter input { margin-bottom: 10px !important }
+
+    .select2-container--default .select2-selection--multiple {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 0.5rem !important;
+        min-height: 38px !important;
+        padding: 2px 4px !important;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: #1e4d7b !important;
+        outline: none !important;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #1e4d7b !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 0.375rem !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        padding: 2px 8px !important;
+        margin-top: 4px !important;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+        cursor: default;
+        padding-left: 6px;
+        padding-right: 5px;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: #ffffff !important;
+        margin-right: 5px !important;
+        border: none !important;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+        background: transparent !important;
+        color: #f87171 !important;
+    }
+    .select2-container .select2-search--inline .select2-search__field {
+        font-size: 0.75rem !important;
+        margin-top: 4px !important;
+    }
+</style>
+
+<!-- Requests Page Content -->
+<div class="space-y-6" id="requests-list">
+    <div class="gov-card p-5 border border-slate-200 rounded-xl bg-white shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+           <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+                    <i class="fas fa-clipboard-list text-[#e58500] text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-[#1e4d7b]">All Requests</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Overview and management of all submitted requests.</p>
+                </div>
+            </div>
+            <button id="toggleFilterBtn" type="button" class="text-xs text-slate-500 hover:text-[#1e4d7b] font-semibold flex items-center gap-1">
+                <span id="toggleFilterText">Hide Filters</span>
+                <i id="toggleFilterIcon" class="fas fa-chevron-up text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+        </div>
+
+        <div id="filterCardBody">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Organisation</label>
+                    <select id="filterOrg" class="select2-multi w-full" multiple="multiple" data-placeholder="Select Organisations">
+                        <?php 
+                        if (!empty($requests)) {
+                            $orgs = array_unique(array_filter(array_column($requests, 'organisation')));
+                            sort($orgs);
+                            foreach ($orgs as $org) {
+                                echo '<option value="' . esc($org) . '">' . esc($org) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Status</label>
+                    <select id="filterStatus" class="select2-multi w-full" multiple="multiple" data-placeholder="Select Statuses">
+                        <?php 
+                        if (!empty($requests)) {
+                            $statuses = array_unique(array_filter(array_column($requests, 'status_name')));
+                            sort($statuses);
+                            foreach ($statuses as $st) {
+                                echo '<option value="' . esc($st) . '">' . esc($st) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Center List Uploaded</label>
+                    <select id="filterCenterReady" class="select2-multi w-full" multiple="multiple" data-placeholder="Select Option">
+                        <option value="Yes">Yes</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-slate-100">
+                <button id="btnResetFilter" type="button" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-red-600 transition flex items-center gap-1">
+                    <i class="fas fa-rotate-left"></i> Reset
+                </button>
+                <button id="btnApplyFilter" type="button" class="px-5 py-2 bg-[#1e4d7b] hover:bg-[#163a5d] text-white text-xs font-semibold rounded-lg transition shadow-sm flex items-center gap-1.5">
+                    <i class="fas fa-search"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table Card -->
+    <div class="gov-card p-5 overflow-hidden shadow-sm border border-slate-200 rounded-xl bg-white">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm gov-table rounded-lg overflow-hidden" id="requestsTable">
+                <thead class="bg-[#1e4d7b] text-white">
+                    <tr>
+                        <th class="px-5 py-3.5 text-left font-semibold uppercase tracking-wider text-xs">Request ID</th>
+                        <th class="px-5 py-3.5 text-left font-semibold uppercase tracking-wider text-xs">Organisation</th>
+                        <th class="px-5 py-3.5 text-left font-semibold uppercase tracking-wider text-xs">Exam Name</th>
+                        <th class="px-5 py-3.5 text-left font-semibold uppercase tracking-wider text-xs">Exam Date</th>
+                        <th class="px-5 py-3.5 text-left font-semibold uppercase tracking-wider text-xs">Status</th>
+                        <th class="px-5 py-3.5 text-left font-semibold uppercase tracking-wider text-xs">Center List Uploaded</th>
+                        <th class="px-5 py-3.5 text-right pr-6 font-semibold uppercase tracking-wider text-xs">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
+                    <?php if (!empty($requests) && is_array($requests)): ?>
+                        <?php foreach ($requests as $request): ?>
+                            <tr class="hover:bg-slate-50/80 transition-colors duration-150">
+                                
+                                <!-- 1. REQUEST ID -->
+                                <td class="px-5 py-4 font-bold text-[#1e4d7b]">
+                                    <?= esc($request['app_no'] ?? '#' . str_pad($request['id'], 4, '0', STR_PAD_LEFT)) ?>
+                                </td>
+                                
+                                <!-- 2. ORGANISATION -->
+                                <td class="px-5 py-4 font-bold text-slate-800">
+                                    <?= !empty($request['organisation']) ? esc($request['organisation']) : 'N/A' ?>
+                                </td>
+
+                                <!-- 3. EXAM NAME -->
+                                <td class="px-5 py-4 font-semibold text-slate-800">
+                                    <?php 
+                                    if (!empty($request['exam_names'])) {
+                                        $names = array_unique(explode('||', $request['exam_names']));
+                                        foreach ($names as $name) {
+                                            echo '<div class="leading-tight mb-1 last:mb-0">' . esc($name) . '</div>';
+                                        }
+                                    } else {
+                                        echo 'N/A';
+                                    }
+                                    ?>
+                                </td>
+                                
+                                <!-- 4. EXAM DATE  -->
+                                <td class="px-5 py-4 text-slate-600 font-medium">
+                                    <?php 
+                                    if (!empty($request['exam_dates'])) {
+                                        $dates = explode('||', $request['exam_dates']);
+                                        foreach ($dates as $d) {
+                                            if (!empty($d) && $d !== '0000-00-00 00:00:00') {
+                                                echo '<div class="leading-tight mb-1 last:mb-0">' . date('d/m/Y', strtotime($d)) . '</div>';
+                                            }
+                                        }
+                                    } else {
+                                        echo 'N/A';
+                                    }
+                                    ?>
+                                </td>
+
+                                <td class="px-5 py-4 text-left">
+                                    <?php 
+                                    $statusVal = $request['status_name'] ?? '1';
+
+                                    if (in_array($statusVal, [9, 10, 11, 12, '9', '10', '11', '12', 'APPROVED', 'COMPLETED'])) {
+                                        $statusClass = 'bg-emerald-50 text-emerald-700 border-emerald-500';
+                                        $statusIcon  = 'fa-check-circle';
+                                    } elseif (in_array($statusVal, [14, '14', 'REJECTED'])) {
+                                        $statusClass = 'bg-red-50 text-red-700 border-red-500';
+                                        $statusIcon  = 'fa-times-circle';
+                                    } elseif (in_array($statusVal, [13, '13', 'RETURNED'])) {
+                                        $statusClass = 'bg-orange-50 text-orange-700 border-orange-500';
+                                        $statusIcon  = 'fa-rotate-left';
+                                    } else {
+                                        $statusClass = 'bg-amber-50 text-amber-700 border-amber-500';
+                                        $statusIcon  = 'fa-clock';
+                                    }
+                                    ?>
+
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border-l-4 <?= $statusClass ?> font-semibold text-xs shadow-sm">
+                                        <i class="fas <?= $statusIcon ?>"></i>
+                                        <?= esc($statusVal) ?>
+                                    </span>
+                                </td>
+                                
+                                <!-- 6. CENTER LIST UPLOADED -->
+                                <td class="px-5 py-4 text-slate-600 font-medium">
+                                    <?php if (isset($request['centre_list_ready']) && $request['centre_list_ready'] == 1): ?>
+                                        <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">Yes</span>
+                                    <?php else: ?>
+                                        <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">N/A</span>
+                                    <?php endif; ?>
+                                </td>
+
+                                <!-- 7. ACTIONS -->
+                                <td class="px-5 py-4 text-right pr-6">
+                                    <div class="flex justify-end gap-2">
+                                        <button class="w-8 h-8 rounded-lg bg-blue-50 text-[#1e4d7b] hover:bg-blue-100 border border-blue-100 transition flex items-center justify-center" 
+                                                title="View" 
+                                                onclick="pageviewRequest(<?= $request['id'] ?>)">
+                                            <i class="fas fa-eye text-xs"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/select2.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/jquery.dataTables.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/dataTables.buttons.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/jszip.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/pdfmake.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/vfs_fonts.js') ?>"></script>
+<script src="<?= base_url('assets/js/buttons.html5.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/buttons.print.min.js') ?>"></script>
+
+<script>
+$(document).ready(function() {
+    let requestsDataTable = null;
+
+    $('.select2-multi').select2({
+        width: '100%',
+        allowClear: true,
+        closeOnSelect: false
+    });
+
+    $('#toggleFilterBtn').click(function() {
+        $('#filterCardBody').slideToggle(200, function() {
+            if ($(this).is(':visible')) {
+                $('#toggleFilterText').text('Hide Filters');
+                $('#toggleFilterIcon').removeClass('rotate-180');
+            } else {
+                $('#toggleFilterText').text('Show Filters');
+                $('#toggleFilterIcon').addClass('rotate-180');
+            }
+        });
+    });
+
+    function initDataTable() {
+        if ($.fn && $.fn.DataTable) {
+            if ($.fn.DataTable.isDataTable('#requestsTable')) {
+                $('#requestsTable').DataTable().destroy();
+            }
+
+            requestsDataTable = $('#requestsTable').DataTable({
+                "pageLength": 10,
+                "lengthMenu": [ [10, 15, 25, 50, 100, -1], [10, 15, 25, 50, 100, "All"] ],
+                "responsive": true,
+                "autoWidth": false,
+                "dom": '<"flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3"<"flex items-center gap-4"Bl>f>rt<"flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4"ip>',
+                "buttons": [
+                    { extend: 'copy', text: '<i class="fas fa-copy me-1"></i> Copy', title: 'All Requests', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                    { extend: 'csv', text: '<i class="fas fa-file-csv me-1"></i> CSV', title: 'All Requests', filename: 'All_Requests', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                    { extend: 'excel', text: '<i class="fas fa-file-excel me-1"></i> Excel', title: 'All Requests', filename: 'All_Requests', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                    { extend: 'pdf', text: '<i class="fas fa-file-pdf me-1"></i> PDF', title: 'All Requests', filename: 'All_Requests', exportOptions: { columns: [0, 1, 2, 3, 4] } },
+                    { extend: 'print', text: '<i class="fas fa-print me-1"></i> Print', title: 'All Requests', exportOptions: { columns: [0, 1, 2, 3, 4] } }
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [5, 6] }
+                ],
+                "language": {
+                    "search": "_INPUT_",
+                    "searchPlaceholder": "Search requests...",
+                    "lengthMenu": "Show _MENU_ entries",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty": "Showing 0 to 0 of 0 entries",
+                    "infoFiltered": "(filtered from _MAX_ total entries)",
+                    "paginate": {
+                        "previous": "<i class='fas fa-chevron-left text-xs'></i>",
+                        "next": "<i class='fas fa-chevron-right text-xs'></i>"
+                    }
+                }
+            });
+        }
+    }
+
+    initDataTable();
+
+    function applyMultiFilters() {
+        if (!requestsDataTable) return;
+
+        let selectedOrgs = $('#filterOrg').val() || [];
+        let selectedStatuses = $('#filterStatus').val() || [];
+        let selectedCenters = $('#filterCenterReady').val() || [];
+
+        if (selectedOrgs.length > 0 || selectedStatuses.length > 0 || selectedCenters.length > 0) {
+            $('#activeFilterBadge').removeClass('hidden');
+        } else {
+            $('#activeFilterBadge').addClass('hidden');
+        }
+
+        let orgRegex = selectedOrgs.length ? '^(' + selectedOrgs.map($.fn.dataTable.util.escapeRegex).join('|') + ')$' : '';
+        let statusRegex = selectedStatuses.length ? '(' + selectedStatuses.map($.fn.dataTable.util.escapeRegex).join('|') + ')' : '';
+        let centerRegex = selectedCenters.length ? '(' + selectedCenters.map($.fn.dataTable.util.escapeRegex).join('|') + ')' : '';
+
+        requestsDataTable.column(1).search(orgRegex, true, false);
+        requestsDataTable.column(4).search(statusRegex, true, false);
+        requestsDataTable.column(5).search(centerRegex, true, false);
+
+        requestsDataTable.draw();
+    }
+
+    $('#btnApplyFilter').click(function(e) {
+        e.preventDefault();
+        applyMultiFilters();
+    });
+
+    $('#btnResetFilter').click(function(e) {
+        e.preventDefault();
+        
+        $('#filterOrg').val(null).trigger('change');
+        $('#filterStatus').val(null).trigger('change');
+        $('#filterCenterReady').val(null).trigger('change');
+
+        $('#activeFilterBadge').addClass('hidden');
+
+        if (requestsDataTable) {
+            requestsDataTable.columns().search('').draw();
+        }
+    });
+});
+
+function pageviewRequest(requestId) {
+    if (requestId) {
+        window.location.href = '/request-view/' + requestId;
+    } else {
+        console.error('Request ID is required');
+    }
+}
+</script>
+
+<?php
+$page_content = ob_get_clean();
+include dirname(__DIR__) . '/dashboard.php';
+?>
