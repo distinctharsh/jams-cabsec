@@ -72,9 +72,6 @@ main.signup-page-main {
         var(--page-bg);
 }
 
-/* =========================================================
-   PAGE WRAPPER
-   ========================================================= */
 
 .authorization-page-wrapper {
     position: relative;
@@ -83,10 +80,6 @@ main.signup-page-main {
     max-width: 86%;
     margin: 0 auto;
 }
-
-/* =========================================================
-   MAIN TWO-COLUMN LAYOUT
-   ========================================================= */
 
 .authorization-layout {
     display: grid;
